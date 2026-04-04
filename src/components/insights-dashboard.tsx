@@ -1,12 +1,14 @@
 "use client"
 
-import { AlertCircle, ExternalLink, MessageCircle, RefreshCw, Send } from "lucide-react"
+import { useState } from "react"
+import { AlertCircle, ExternalLink, HelpCircle, MessageCircle, Phone, RefreshCw, Send, Shield, Star } from "lucide-react"
 
 import { openFinMateChat } from "@/components/chat-bus"
+import { EmergencyCalculator } from "@/components/emergency-calculator"
 import { InsightsVisualization } from "@/components/insights-visualization"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import type { FinMateInsights } from "@/lib/types"
+import type { EnrollmentFormData, FinMateInsights } from "@/lib/types"
 
 interface InsightsDashboardProps {
   insights: FinMateInsights
@@ -15,7 +17,29 @@ interface InsightsDashboardProps {
   onSendReport: () => void
   loading?: boolean
   usingPlaceholder?: boolean
+  formData?: EnrollmentFormData | null
 }
+
+const TESTIMONIALS = [
+  {
+    name: "Maria G.",
+    role: "First-time homebuyer",
+    text: "FinMate helped me understand the difference between HMO and PPO before open enrollment. I saved $1,200/year by switching plans!",
+    stars: 5,
+  },
+  {
+    name: "James L.",
+    role: "Small business owner",
+    text: "The emergency readiness calculator was eye-opening. I didn't realize how underfunded my safety net was. Now I'm on track for 6 months.",
+    stars: 5,
+  },
+  {
+    name: "Priya K.",
+    role: "Recent graduate",
+    text: "I had no idea what renters insurance was until FinMate explained it. $20/month for $30K in coverage? Already signed up through State Farm.",
+    stars: 5,
+  },
+]
 
 export function InsightsDashboard({
   insights,
@@ -24,8 +48,10 @@ export function InsightsDashboard({
   onSendReport,
   loading,
   usingPlaceholder = false,
+  formData,
 }: InsightsDashboardProps) {
   const topPriority = insights.priorityBenefits[0]
+  const [showHelp, setShowHelp] = useState(false)
 
   return (
     <div className="relative min-h-screen bg-[#F7F4F2] pb-32 text-[#2A1A1A]">
@@ -34,7 +60,7 @@ export function InsightsDashboard({
           <div className="mx-auto flex w-full max-w-5xl items-center gap-2 text-sm">
             <AlertCircle className="h-4 w-4 text-[#A41E34]" />
             <span className="font-medium text-[#4D3B3B]">
-              * Using placeholder data. Add your profile information to see personalized insights.
+              * Using placeholder data. Complete the survey to see personalized insights.
             </span>
           </div>
         </div>
@@ -69,47 +95,66 @@ export function InsightsDashboard({
       </header>
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-6">
+        {/* Focus Card */}
         <Card className="overflow-hidden rounded-3xl border border-[#E2D5D7] bg-white p-6 shadow-lg">
           <div className="space-y-4">
-  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#7F1527]">
-    Your focus
-  </p>
-  <h2 className="text-2xl font-semibold text-[#2A1A1A]">
-    {insights.focusGoal}
-  </h2>
-  <p className="text-sm leading-relaxed text-[#4D3B3B]">
-    {insights.statement}
-  </p>
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#7F1527]">
+              Your focus
+            </p>
+            <h2 className="text-2xl font-semibold text-[#2A1A1A]">
+              {insights.focusGoal}
+            </h2>
+            <p className="text-sm leading-relaxed text-[#4D3B3B]">
+              {insights.statement}
+            </p>
 
-  {topPriority && (
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="inline-flex items-center gap-2 rounded-full bg-[#F9EDEA] px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#A41E34]">
-        Top priority: {topPriority.title}
-      </div>
+            {topPriority && (
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[#F9EDEA] px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#A41E34]">
+                  Top priority: {topPriority.title}
+                </div>
 
-      <Button
-        className="ml-2 rounded-full bg-[#A41E34] px-6 py-3 text-sm font-semibold text-white hover:bg-[#7F1527]"
-        onClick={() =>
-          openFinMateChat({
-            prompt: topPriority
-              ? `How do I start ${topPriority.title.toLowerCase()}?`
-              : "What should I do first?",
-          })
-        }
-      >
-        Chat about my priorities
-        <MessageCircle className="ml-2 h-4 w-4" />
-      </Button>
-    </div>
-  )}
-</div>
-
+                <Button
+                  className="ml-2 rounded-full bg-[#A41E34] px-6 py-3 text-sm font-semibold text-white hover:bg-[#7F1527]"
+                  onClick={() =>
+                    openFinMateChat({
+                      prompt: topPriority
+                        ? `How do I start ${topPriority.title.toLowerCase()}?`
+                        : "What should I do first?",
+                    })
+                  }
+                >
+                  Chat about my priorities
+                  <MessageCircle className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
         </Card>
 
+        {/* Emergency Readiness Calculator */}
+        {formData && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-[#2A1A1A]">Emergency Readiness</h2>
+              <span className="text-xs uppercase tracking-[0.3em] text-[#7F1527]">Financial safety net</span>
+            </div>
+            <EmergencyCalculator
+              incomeRange={formData.incomeRange}
+              coveragePreference={formData.coveragePreference}
+              dependents={formData.dependents}
+              riskComfort={formData.riskComfort}
+              savingsRate={formData.savingsRate}
+              age={formData.age}
+            />
+          </section>
+        )}
+
+        {/* Priority Benefits */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[#2A1A1A]">Priority benefits to tackle</h2>
-            <span className="text-xs uppercase tracking-[0.3em] text-[#7F1527]">Stay mobile-friendly</span>
+            <span className="text-xs uppercase tracking-[0.3em] text-[#7F1527]">Personalized for you</span>
           </div>
           <div className="space-y-4">
             {insights.priorityBenefits.map((benefit) => (
@@ -172,6 +217,7 @@ export function InsightsDashboard({
           </Button>
         </section>
 
+        {/* Financial Overview */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[#2A1A1A]">Financial Overview</h2>
@@ -180,6 +226,7 @@ export function InsightsDashboard({
           <InsightsVisualization data={{}} />
         </section>
 
+        {/* Timeline */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[#2A1A1A]">Timeline to act</h2>
@@ -196,6 +243,52 @@ export function InsightsDashboard({
           </div>
         </section>
 
+        {/* Talk to Agent CTA */}
+        <Card className="rounded-3xl border-2 border-[#E31837]/20 bg-gradient-to-r from-[#FEF2F2] to-white p-6 shadow-md">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="rounded-2xl bg-[#E31837]/10 p-3">
+                <Phone className="h-6 w-6 text-[#E31837]" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-[#2A1A1A]">Talk to a State Farm Agent</h2>
+                <p className="text-sm text-[#4D3B3B]">Get personalized advice from a licensed local agent who knows your community.</p>
+              </div>
+            </div>
+            <a
+              href="https://www.statefarm.com/agent"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-md shadow-[#E31837]/20 transition hover:bg-[#C41230]"
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Find an Agent
+            </a>
+          </div>
+        </Card>
+
+        {/* Testimonials */}
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold text-[#2A1A1A]">What people are saying</h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {TESTIMONIALS.map((t) => (
+              <Card key={t.name} className="rounded-3xl border border-[#E2D5D7] bg-white p-5 shadow-sm">
+                <div className="flex gap-0.5 mb-3">
+                  {Array.from({ length: t.stars }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-[#E31837] text-[#E31837]" />
+                  ))}
+                </div>
+                <p className="text-sm text-[#4D3B3B] leading-relaxed italic">"{t.text}"</p>
+                <div className="mt-3 border-t border-[#F0E6E7] pt-3">
+                  <p className="text-sm font-semibold text-[#2A1A1A]">{t.name}</p>
+                  <p className="text-xs text-[#7F1527]">{t.role}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Chat CTA */}
         <Card className="rounded-3xl border border-[#E2D5D7] bg-white p-6 shadow-md">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -211,7 +304,33 @@ export function InsightsDashboard({
             </Button>
           </div>
         </Card>
+
+        {/* Disclaimer Footer */}
+        <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 text-center">
+          <p className="text-xs text-[#6B7280] leading-relaxed">
+            <strong>Disclaimer:</strong> FinMate provides general financial education and guidance only. 
+            This is not personalized financial, insurance, or investment advice. For coverage decisions, 
+            please consult with a licensed State Farm agent. Your specific situation may vary. 
+            State Farm® and its logo are registered trademarks of State Farm Mutual Automobile Insurance Company.
+          </p>
+        </div>
       </main>
+
+      {/* Floating "Confused? Get help" button */}
+      <div className="fixed bottom-24 right-4 z-50 sm:bottom-28 sm:right-6">
+        <button
+          onClick={() => {
+            setShowHelp(!showHelp)
+            if (!showHelp) {
+              openFinMateChat({ prompt: "I'm confused about my results. Can you explain them in simpler terms?" })
+            }
+          }}
+          className="flex items-center gap-2 rounded-full bg-[#E31837] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#E31837]/30 transition hover:bg-[#C41230] hover:shadow-xl"
+        >
+          <HelpCircle className="h-5 w-5" />
+          <span className="hidden sm:inline">Confused? Get help</span>
+        </button>
+      </div>
     </div>
   )
 }
