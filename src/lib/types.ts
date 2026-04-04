@@ -141,7 +141,7 @@ export interface LifeLensInsights {
   focusGoal: string
   statement: string
   timeline: { period: string; title: string; description: string }[]
-  conversation: { speaker: "LifeLens" | "You"; message: string }[]
+  conversation: { speaker: "FinMate" | "You"; message: string }[]
   prompts: string[]
   plans: LifeLensPlan[]
   recommendedPlans?: { id: string; name: string; reason: string; resources?: PlanResource[] }[]
@@ -161,7 +161,7 @@ export interface SavedMoment {
 }
 
 export interface ChatEntry {
-  speaker: "LifeLens" | "You"
+  speaker: "FinMate" | "You"
   message: string
   timestamp: string
   status?: "pending" | "final"
@@ -181,5 +181,6 @@ export interface ProfileSnapshot {
   createdAt: string
 }
 
-// Alias for compatibility with component naming conventions
+// Aliases for compatibility with component naming conventions
 export type FinMateInsights = LifeLensInsights
+export type FinMatePlan = LifeLensPlan
