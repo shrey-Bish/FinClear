@@ -84,9 +84,10 @@ function profileToRecord(profile: EnrollmentFormData) {
 }
 
 function coerceRemotePlans(raw: LifeLensInsights | (LifeLensInsights & { recommendedPlans?: unknown })) {
-  const insights = raw as LifeLensInsights & { recommendedPlans?: { id?: string; name?: string; reason?: string; resources?: PlanResource[]; monthly_cost_estimate?: string }[] }
+  type RemotePlan = { id?: string; name?: string; reason?: string; resources?: PlanResource[]; monthly_cost_estimate?: string };
+  const insights = raw as LifeLensInsights & { recommendedPlans?: RemotePlan[] }
   if (!insights.plans && Array.isArray(insights.recommendedPlans)) {
-    insights.plans = insights.recommendedPlans.map((plan, index) => ({
+    insights.plans = insights.recommendedPlans.map((plan: RemotePlan, index) => ({
       planId: plan.id ?? `remote-plan-${index + 1}`,
       planName: plan.name ?? `Plan ${index + 1}`,
       shortDescription: plan.reason ?? "Personalized option",

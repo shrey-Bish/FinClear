@@ -235,8 +235,8 @@ export function buildPriorityBenefits(data: EnrollmentFormData): PriorityBenefit
   const dependentsNote =
     data.coveragePreference === "self-plus-family"
       ? `${data.dependents} dependent${data.dependents === 1 ? "" : "s"} rely on your benefits`
-      : data.coveragePreference === "self-plus-partner"
-        ? "Your partner looks to your coverage for stability"
+      : data.coveragePreference === "self-plus-spouse"
+        ? "Your spouse looks to your coverage for stability"
         : "Your paycheck keeps your lifestyle protected"
 
   const partnerNote =
@@ -249,8 +249,8 @@ export function buildPriorityBenefits(data: EnrollmentFormData): PriorityBenefit
   const coverageTitle =
     data.coveragePreference === "self-plus-family"
       ? "Protect your household income"
-      : data.coveragePreference === "self-plus-partner"
-        ? "Coordinate coverage with your partner"
+      : data.coveragePreference === "self-plus-spouse"
+        ? "Coordinate coverage with your spouse"
         : "Lock in your income protection"
 
   const coverageDescription =

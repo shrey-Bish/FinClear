@@ -5,7 +5,7 @@ import { buildInsights, withDerivedMetrics } from "@/lib/insights"
 import { getStore } from "../_store"
 import type { EnrollmentFormData, LifeLensInsights, PlanPreferenceOption } from "@/lib/types"
 
-export const runtime = "nodejs" as const
+export const runtime = "nodejs"
 
 interface GenerateInsightsRequest {
   userId: string

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-export const runtime = "nodejs" as const
+export const runtime = "nodejs"
 
 type ChatRequest = { prompt: string; userId?: string; sessionId?: string; context?: Record<string, unknown> }
 type ChatOK = { message: string; provider: "bedrock" | "claude-fallback"; note?: string }

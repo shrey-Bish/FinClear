@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import type { ReactNode } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, Shield, Eye, Lock, Database, CheckCircle2, AlertCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -38,7 +38,39 @@ import { withDerivedMetrics } from "@/lib/insights"
 import type { EnrollmentFormData } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
-type Phase = "hr" | "steps" | "summary"
+type Phase = "trust" | "hr" | "steps" | "summary"
+
+// Trust Passport data collection items
+const TRUST_PASSPORT_ITEMS = [
+  {
+    icon: Database,
+    title: "Basic Information",
+    description: "Name, age, location, employment status",
+    why: "To personalize recommendations for your region and life stage",
+    stored: "Locally on your device",
+  },
+  {
+    icon: Shield,
+    title: "Financial Profile",
+    description: "Income range, dependents, risk tolerance",
+    why: "To match you with appropriate insurance and savings plans",
+    stored: "Locally on your device",
+  },
+  {
+    icon: Eye,
+    title: "Health Preferences",
+    description: "Coverage needs, existing conditions (optional)",
+    why: "To recommend suitable health and dental plans",
+    stored: "Locally on your device",
+  },
+  {
+    icon: Lock,
+    title: "Goals & Priorities",
+    description: "Financial goals, budget preferences",
+    why: "To prioritize recommendations that matter to you",
+    stored: "Locally on your device",
+  },
+]
 
 interface DynamicQuizProps {
   initialData: EnrollmentFormData
@@ -68,14 +100,15 @@ const HR_CARD_COPY = [
 
 export function DynamicQuiz({ initialData, onComplete, onBack, onUpdate }: DynamicQuizProps) {
   const [answers, setAnswers] = useState<EnrollmentFormData>(() => initializeQuizState(initialData))
-  const [phase, setPhase] = useState<Phase>("hr")
+  const [phase, setPhase] = useState<Phase>("trust")
   const [index, setIndex] = useState(0)
   const [submitting, setSubmitting] = useState(false)
+  const [trustAccepted, setTrustAccepted] = useState(false)
 
 useEffect(() => {
   const prepared = initializeQuizState(initialData)
   setAnswers(prepared)
-  setPhase("hr")
+  setPhase("trust")
   setIndex(0)
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
@@ -112,8 +145,12 @@ useEffect(() => {
   }
 
   const goBack = () => {
-    if (phase === "hr") {
+    if (phase === "trust") {
       onBack()
+      return
+    }
+    if (phase === "hr") {
+      setPhase("trust")
       return
     }
     if (phase === "summary") {
@@ -133,6 +170,10 @@ useEffect(() => {
   }
 
   const goNext = () => {
+    if (phase === "trust") {
+      setPhase("hr")
+      return
+    }
     if (phase === "hr") {
       setPhase("steps")
       setIndex(0)
@@ -151,13 +192,11 @@ useEffect(() => {
     if (!question) return false
     const value = valueForQuestion(question)
     switch (question.type) {
-      case "text":
       case "textarea":
         return typeof value === "string" && value.trim().length > 0
       case "number":
       case "slider":
         return typeof value === "number" && !Number.isNaN(value)
-      case "date":
       case "select":
         return Boolean(value)
       case "boolean":
@@ -183,64 +222,149 @@ useEffect(() => {
   const consentChecked = answers.consentToFollowUp
   const currentIsValid = isCurrentValid(current)
   const progress = useMemo(() => {
-    if (phase === "hr") return 0
+    if (phase === "trust") return 0
+    if (phase === "hr") return 5
     if (phase === "summary") return 100
-    if (!flow.length) return 0
+    if (!flow.length) return 5
     const completed = index + (currentIsValid ? 1 : 0)
-    return Math.min(100, Math.round((completed / flow.length) * 100))
+    return Math.min(100, Math.round(5 + (completed / flow.length) * 90))
   }, [currentIsValid, flow.length, index, phase])
   const progressLabel = `${Math.round(progress)}%`
 
   return (
     <div
       className={cn(
-        "relative flex min-h-screen flex-col bg-[#F7F4F2] text-[#2A1A1A]",
+        "relative flex min-h-screen flex-col bg-[#FAFAFA] text-[#1A1A1A]",
         submitting && "pointer-events-none"
       )}
       aria-busy={submitting}
     >
-      <header className="sticky top-0 z-30 border-b border-[#E3D8D5] bg-[#F7F4F2]/90 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#E5E7EB] bg-white/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-3 py-4 sm:px-6">
           <button
             type="button"
             onClick={goBack}
             disabled={submitting}
-            className="flex items-center gap-2 rounded-full border border-[#E3D8D5] bg-white px-3 py-2 text-xs font-semibold text-[#7F1527] shadow-sm transition sm:px-4 sm:text-sm disabled:opacity-50"
+            className="flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-semibold text-[#E31837] shadow-sm transition sm:px-4 sm:text-sm disabled:opacity-50"
           >
             <ArrowLeft className="h-4 w-4" /> Back
           </button>
           <div className="text-right">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#7F1527] sm:text-xs">
-              {phase === "steps" && current ? current.section : "FinMate quiz"}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#E31837] sm:text-xs">
+              {phase === "trust" ? "Trust Passport" : phase === "steps" && current ? current.section : "FinMate Survey"}
             </p>
-            <p className="text-[10px] text-[#7F1527]/70 sm:text-xs">
-              {phase === "steps" && current
+            <p className="text-[10px] text-[#6B7280] sm:text-xs">
+              {phase === "trust"
+                ? "Data transparency"
+                : phase === "steps" && current
                 ? `Question ${index + 1} of ${flow.length} · ${QUESTION_TYPE_LABEL[current.type]}`
                 : phase === "hr"
-                  ? "HR confirmation"
+                  ? "Profile confirmation"
                   : "Review"}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 px-3 pb-2 sm:px-6">
           <div
-            className="h-1 flex-1 bg-[#EBDDD8]"
+            className="h-1 flex-1 bg-[#F3F4F6]"
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(progress)}
           >
             <div
-              className="h-full bg-gradient-to-r from-[#A41E34] to-[#D94E35] transition-all"
+              className="h-full bg-gradient-to-r from-[#E31837] to-[#FF6B6B] transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7F1527]">{progressLabel}</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E31837]">{progressLabel}</span>
         </div>
       </header>
 
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-y-auto px-3 pb-24 pt-6 sm:px-6">
         <AnimatePresence mode="wait">
+          {/* TRUST PASSPORT PHASE */}
+          {phase === "trust" && (
+            <motion.section
+              key="trust-phase"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35 }}
+              className="scroll-mt-[84px] rounded-[24px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:rounded-[28px] sm:p-8 sm:py-10 sm:px-8"
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-6 w-6 text-[#E31837]" />
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">Trust Passport</p>
+                  </div>
+                  <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Your data, your control</h1>
+                  <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
+                    Before we begin, here's exactly what information we collect and why. 
+                    Like a good neighbor, we believe in complete transparency.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-4">
+                {TRUST_PASSPORT_ITEMS.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <div
+                      key={item.title}
+                      className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 transition hover:border-[#E31837]/30"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FEF2F2]">
+                          <Icon className="h-5 w-5 text-[#E31837]" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-[#1A1A1A]">{item.title}</h3>
+                          <p className="mt-1 text-sm text-[#4B5563]">{item.description}</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-1 text-xs font-medium text-[#059669]">
+                              <CheckCircle2 className="h-3 w-3" />
+                              {item.stored}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-[#6B7280]">
+                            <strong>Why:</strong> {item.why}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-[#FEF3C7] bg-[#FFFBEB] p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0 text-[#D97706]" />
+                  <div>
+                    <p className="text-sm font-semibold text-[#92400E]">Privacy Promise</p>
+                    <p className="mt-1 text-xs text-[#B45309]">
+                      Your data is stored locally on your device. We don't sell or share your personal information. 
+                      You can delete your data anytime from Settings.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-4">
+                <Switch
+                  checked={trustAccepted}
+                  onCheckedChange={setTrustAccepted}
+                  className="data-[state=checked]:bg-[#E31837]"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-[#1A1A1A]">I understand how my data will be used</p>
+                  <p className="text-xs text-[#6B7280]">Required to continue</p>
+                </div>
+              </div>
+            </motion.section>
+          )}
+
           {phase === "hr" && (
             <motion.section
               key="hr-phase"
@@ -248,37 +372,37 @@ useEffect(() => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 shadow-sm sm:rounded-[28px] sm:p-8 sm:py-10 sm:px-8"
+              className="scroll-mt-[84px] rounded-[24px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:rounded-[28px] sm:p-8 sm:py-10 sm:px-8"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#A41E34]/80">Synced from HR</p>
-                  <h1 className="mt-3 text-xl font-semibold text-[#2A1A1A] sm:text-2xl">Welcome back, {answers.preferredName || answers.fullName}</h1>
-                  <p className="mt-3 text-sm leading-relaxed text-[#4D3B3B]">
-                    We pulled your basics from the HR system. Review and continue to personalize your FinMate guidance.
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">Your Profile</p>
+                  <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Welcome, {answers.preferredName || answers.fullName || "there"}</h1>
+                  <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
+                    Review your basic information below. We'll use this to personalize your financial wellness recommendations.
                   </p>
                 </div>
-                <div className="hidden h-8 w-8 rounded-full border border-[#E3D8D5] sm:block" aria-hidden="true" />
+                <div className="hidden h-8 w-8 rounded-full border border-[#E5E7EB] sm:block" aria-hidden="true" />
               </div>
 
               <div className="mt-8 space-y-4">
-                <div className="rounded-3xl border border-[#E2D5D7] bg-white p-5 shadow-sm text-sm leading-relaxed text-[#4D3B3B]">
+                <div className="rounded-3xl border border-[#E5E7EB] bg-white p-5 shadow-sm text-sm leading-relaxed text-[#4B5563]">
                   <p>
-                    <strong>Employee:</strong> {answers.fullName}
+                    <strong>Name:</strong> {answers.fullName || "Not provided"}
                   </p>
                   <p>
-                    <strong>Work location:</strong> {answers.workState}, {answers.workCountry}
+                    <strong>Location:</strong> {answers.workState}, {answers.workCountry}
                   </p>
                   <p>
-                    <strong>Status:</strong> Active – verified via HR system
+                    <strong>Status:</strong> Active participant
                   </p>
                 </div>
 
-                <div className="grid gap-3 text-sm text-[#4D3B3B] sm:grid-cols-2">
+                <div className="grid gap-3 text-sm text-[#4B5563] sm:grid-cols-2">
                   {HR_CARD_COPY.map((item) => (
-                    <Card key={item.label} className="rounded-2xl border border-[#F0E6E7] bg-[#FBF7F6] p-4 shadow-none">
-                      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7F1527]">{item.label}</p>
-                      <p className="mt-1 text-sm font-semibold text-[#2A1A1A]">{item.accessor(answers) || "—"}</p>
+                    <Card key={item.label} className="rounded-2xl border border-[#F3F4F6] bg-[#FAFAFA] p-4 shadow-none">
+                      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E31837]">{item.label}</p>
+                      <p className="mt-1 text-sm font-semibold text-[#1A1A1A]">{item.accessor(answers) || "—"}</p>
                     </Card>
                   ))}
                 </div>
@@ -293,33 +417,33 @@ className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 shadow-sm sm:rounded-[28px] sm:p-8 sm:py-10 sm:px-8"
+              className="scroll-mt-[84px] rounded-[24px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:rounded-[28px] sm:p-8 sm:py-10 sm:px-8"
             >
               <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-3">
                   {showSectionIntro && (
                     <div className="space-y-2">
-                      <span className="inline-flex items-center rounded-full bg-[#F3E8E6] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#A41E34]">
+                      <span className="inline-flex items-center rounded-full bg-[#FEF2F2] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#E31837]">
                         {current.section}
                       </span>
                       {current.sectionDescription && (
-                        <p className="text-xs leading-relaxed text-[#7F1527]/80 sm:max-w-sm">
+                        <p className="text-xs leading-relaxed text-[#6B7280] sm:max-w-sm">
                           {current.sectionDescription}
                         </p>
                       )}
                     </div>
                   )}
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#A41E34]/80">
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">
                     Question {index + 1}
                   </p>
-                  <h1 className="text-xl font-semibold text-[#2A1A1A] sm:text-2xl">{current.title}</h1>
-                  <p className="text-sm leading-relaxed text-[#4D3B3B]">{current.prompt}</p>
+                  <h1 className="text-xl font-semibold text-[#1A1A1A] sm:text-2xl">{current.title}</h1>
+                  <p className="text-sm leading-relaxed text-[#4B5563]">{current.prompt}</p>
                 </div>
-                <div className="hidden h-9 w-9 rounded-full border border-[#E3D8D5] sm:block" aria-hidden="true" />
+                <div className="hidden h-9 w-9 rounded-full border border-[#E5E7EB] sm:block" aria-hidden="true" />
               </div>
 
               <div className="mt-8 space-y-6">
-                {renderField(current, valueForQuestion(current), (value) => handleValueChange(current, value))}
+                {renderField(current, valueForQuestion(current) as string | number | boolean | string[] | null, (value) => handleValueChange(current, value))}
               </div>
             </motion.section>
           )}
@@ -331,20 +455,20 @@ className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="min-h-[calc(100vh-120px)] scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 shadow-sm sm:min-h-[calc(100vh-100px)] sm:rounded-[28px] sm:p-8"
+              className="min-h-[calc(100vh-120px)] scroll-mt-[84px] rounded-[24px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:min-h-[calc(100vh-100px)] sm:rounded-[28px] sm:p-8"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#A41E34]/80">Summary</p>
-                  <h1 className="mt-3 text-xl font-semibold text-[#2A1A1A] sm:text-2xl">Here’s your FinMate profile</h1>
-                  <p className="mt-3 text-sm leading-relaxed text-[#4D3B3B]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">Summary</p>
+                  <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Here’s your FinMate profile</h1>
+                  <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
                     Confirm your answers and share consent so FinMate can generate your personalized benefits plans.
                   </p>
                 </div>
-                <div className="hidden h-8 w-8 rounded-full border border-[#E3D8D5] sm:block" aria-hidden="true" />
+                <div className="hidden h-8 w-8 rounded-full border border-[#E5E7EB] sm:block" aria-hidden="true" />
               </div>
 
-              <div className="mt-8 space-y-6 text-sm text-[#4D3B3B]">
+              <div className="mt-8 space-y-6 text-sm text-[#4B5563]">
                 <SummarySection title="Coverage & Family">
                   <SummaryRow
                     label="Coverage focus"
@@ -470,10 +594,10 @@ className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 
                 </SummarySection>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#E2D5D7] bg-[#FBF7F6] p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-[#2A1A1A]">I agree to share this profile for plan generation</p>
-                  <p className="text-xs text-[#7F1527]">Required so FinMate can generate recommendations and chat summaries.</p>
+                  <p className="text-sm font-semibold text-[#1A1A1A]">I agree to share this profile for plan generation</p>
+                  <p className="text-xs text-[#E31837]">Required so FinMate can generate recommendations and chat summaries.</p>
                 </div>
                 <Switch
                   checked={consentChecked}
@@ -487,7 +611,7 @@ className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-4 text-sm font-semibold text-[#7F1527]"
+                  className="mt-4 text-sm font-semibold text-[#E31837]"
                 >
                   Analyzing your FinMate profile…
                 </motion.p>
@@ -501,7 +625,7 @@ className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 
             variant="outline"
             onClick={goBack}
             disabled={submitting}
-            className="rounded-full border-[#E3D8D5] px-5 py-3 text-sm font-semibold text-[#7F1527] shadow-sm transition disabled:opacity-50"
+            className="rounded-full border-[#E5E7EB] px-5 py-3 text-sm font-semibold text-[#E31837] shadow-sm transition disabled:opacity-50"
           >
             Back
           </Button>
@@ -510,18 +634,27 @@ className="scroll-mt-[84px] rounded-[24px] border border-[#E2D5D7] bg-white p-5 
             <Button
               onClick={handleSubmit}
               disabled={!consentChecked || submitting}
-              className="inline-flex items-center justify-center rounded-full bg-[#A41E34] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#7F1527] disabled:opacity-40"
+              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C41230] disabled:opacity-40"
             >
               {submitting ? "Analyzing…" : "Generate my insights"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          ) : phase === "trust" ? (
+            <Button
+              onClick={goNext}
+              disabled={!trustAccepted}
+              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C41230] disabled:opacity-40"
+            >
+              I understand, continue
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
             <Button
               onClick={goNext}
               disabled={submitting || (phase === "steps" && !currentIsValid)}
-              className="inline-flex items-center justify-center rounded-full bg-[#A41E34] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#7F1527] disabled:opacity-40"
+              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C41230] disabled:opacity-40"
             >
-              {phase === "hr" ? "Start personalizing" : "Continue"}
+              {phase === "hr" ? "Start survey" : "Continue"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
@@ -540,17 +673,17 @@ function renderField(
     case "number":
       return (
         <div className="space-y-2">
-          <Label className="text-sm text-[#7F1527]">Your answer</Label>
+          <Label className="text-sm text-[#E31837]">Your answer</Label>
           <Input
             type="number"
             min={question.min}
             max={question.max}
             value={typeof value === "number" ? value : value ? Number(value) : ""}
             onChange={(event) => onChange(event.target.value ? Number(event.target.value) : null)}
-            className="h-12 rounded-2xl border-[#E3D8D5] bg-[#FBF7F6] px-4 text-base"
+            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] px-4 text-base"
           />
           {question.helperText && (
-            <p className="text-xs text-[#7F1527]/80">{question.helperText}</p>
+            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -563,24 +696,24 @@ function renderField(
               type="button"
               onClick={() => onChange(option.value)}
               className={cn(
-                "flex w-full items-center justify-between rounded-2xl border px-4 py-4 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A41E34]/30",
+                "flex w-full items-center justify-between rounded-2xl border px-4 py-4 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E31837]/30",
                 value === option.value
-                  ? "border-transparent bg-gradient-to-r from-[#A41E34] to-[#D94E35] text-white"
-                  : "border-[#E3D8D5] bg-[#FBF7F6] text-[#2A1A1A] hover:border-[#A41E34]/40",
+                  ? "border-transparent bg-gradient-to-r from-[#E31837] to-[#FF6B6B] text-white"
+                  : "border-[#E5E7EB] bg-[#FAFAFA] text-[#1A1A1A] hover:border-[#E31837]/40",
               )}
               aria-pressed={value === option.value}
             >
               <span>
                 <span className="block font-semibold">{option.label}</span>
                 {option.helper && (
-                  <span className={cn("text-xs", value === option.value ? "text-white/80" : "text-[#7F1527]")}>{option.helper}</span>
+                  <span className={cn("text-xs", value === option.value ? "text-white/80" : "text-[#E31837]")}>{option.helper}</span>
                 )}
               </span>
               <ArrowRight className="h-4 w-4" />
             </button>
           ))}
           {question.helperText && (
-            <p className="text-xs text-[#7F1527]/80">{question.helperText}</p>
+            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -600,13 +733,13 @@ function renderField(
               aria-label={question.title}
             />
             {(minLabel || maxLabel) && (
-              <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#7F1527]/70">
+              <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#E31837]/70">
                 <span>{minLabel}</span>
                 <span>{maxLabel}</span>
               </div>
             )}
           </div>
-          <p className="text-sm font-semibold text-[#7F1527]">
+          <p className="text-sm font-semibold text-[#E31837]">
             {question.valueFormatter
               ? question.valueFormatter(numericValue)
               : question.id === "riskComfort"
@@ -614,7 +747,7 @@ function renderField(
                 : `${numericValue}`}
           </p>
           {question.helperText && (
-            <p className="text-xs text-[#7F1527]/80">{question.helperText}</p>
+            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -628,10 +761,10 @@ function renderField(
               type="button"
               onClick={() => onChange(choice.value)}
               className={cn(
-                "w-full rounded-full border px-5 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A41E34]/30 sm:w-auto",
+                "w-full rounded-full border px-5 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E31837]/30 sm:w-auto",
                 value === choice.value
-                  ? "border-transparent bg-gradient-to-r from-[#A41E34] to-[#D94E35] text-white"
-                  : "border-[#E3D8D5] bg-[#FBF7F6] text-[#7F1527] hover:border-[#A41E34]/40",
+                  ? "border-transparent bg-gradient-to-r from-[#E31837] to-[#FF6B6B] text-white"
+                  : "border-[#E5E7EB] bg-[#FAFAFA] text-[#E31837] hover:border-[#E31837]/40",
               )}
               aria-pressed={value === choice.value}
             >
@@ -639,7 +772,7 @@ function renderField(
             </button>
           ))}
           {question.helperText && (
-            <p className="w-full text-xs text-[#7F1527]/80">{question.helperText}</p>
+            <p className="w-full text-xs text-[#E31837]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -662,10 +795,10 @@ function renderField(
                   onChange(next)
                 }}
                 className={cn(
-                  "rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A41E34]/30",
+                  "rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E31837]/30",
                   active
-                    ? "border-transparent bg-gradient-to-r from-[#A41E34] to-[#D94E35] text-white"
-                    : "border-[#E3D8D5] bg-[#FBF7F6] text-[#7F1527] hover:border-[#A41E34]/40",
+                    ? "border-transparent bg-gradient-to-r from-[#E31837] to-[#FF6B6B] text-white"
+                    : "border-[#E5E7EB] bg-[#FAFAFA] text-[#E31837] hover:border-[#E31837]/40",
                 )}
                 aria-pressed={active}
               >
@@ -674,23 +807,23 @@ function renderField(
             )
           })}
           {question.helperText && (
-            <p className="w-full text-xs text-[#7F1527]/80">{question.helperText}</p>
+            <p className="w-full text-xs text-[#E31837]/80">{question.helperText}</p>
           )}
         </div>
       )
     case "textarea":
       return (
         <div className="space-y-2">
-          <Label className="text-sm text-[#7F1527]">Share details</Label>
+          <Label className="text-sm text-[#E31837]">Share details</Label>
           <Textarea
             value={typeof value === "string" ? value : ""}
             rows={4}
             placeholder={question.placeholder}
             onChange={(event) => onChange(event.target.value)}
-            className="rounded-2xl border-[#E3D8D5] bg-[#FBF7F6] px-4 py-3 text-sm"
+            className="rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3 text-sm"
           />
           {question.helperText && (
-            <p className="text-xs text-[#7F1527]/80">{question.helperText}</p>
+            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -702,7 +835,7 @@ function renderField(
 function SummarySection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7F1527]">{title}</h2>
+      <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E31837]">{title}</h2>
       <div className="space-y-3">{children}</div>
     </section>
   )
@@ -710,9 +843,9 @@ function SummarySection({ title, children }: { title: string; children: ReactNod
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-2xl border border-[#F0E6E7] bg-[#FBF7F6] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7F1527]">{label}</span>
-      <span className="text-sm font-semibold text-[#2A1A1A]">{value}</span>
+    <div className="flex flex-col gap-1 rounded-2xl border border-[#F3F4F6] bg-[#FAFAFA] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E31837]">{label}</span>
+      <span className="text-sm font-semibold text-[#1A1A1A]">{value}</span>
     </div>
   )
 }
