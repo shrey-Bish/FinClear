@@ -6,10 +6,10 @@ import { UserProvider } from "@/lib/user-context"
 import "@/styles/globals.css"
 
 export const metadata: Metadata = {
-  title: "LifeLens - AI-Powered Personal Financial Advisor",
+  title: "FinMate by State Farm - Your Financial Wellness Partner",
   description:
-    "Every life event deserves clear financial guidance. AI-driven support to help you understand benefits, savings, and next steps.",
-  generator: "v0.app",
+    "Like a good neighbor, FinMate is here. AI-powered financial guidance to help you make confident decisions about insurance, benefits, and emergency planning.",
+  generator: "State Farm",
 }
 
 export default function RootLayout({
