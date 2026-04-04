@@ -62,20 +62,20 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
   ]
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white text-[#1E0D0E]">
-      {/* Top Gradient */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[380px] bg-gradient-to-b from-[#FDF4EF] via-[#F8E3DC] to-transparent" />
+    <div className="relative min-h-screen overflow-hidden bg-white text-[#1A1A1A]">
+      {/* Top Gradient - State Farm subtle red tint */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[380px] bg-gradient-to-b from-[#FEF2F2] via-[#FEE2E2] to-transparent" />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 pb-20 pt-6 sm:px-8">
         {/* HEADER */}
         <header className="flex items-center justify-between">
           <motion.span
-            className="hidden text-s font-semibold uppercase tracking-[0.35em] text-[#7F1527]/80 md:block"
+            className="hidden text-s font-semibold uppercase tracking-[0.35em] text-[#E31837]/80 md:block"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Lincoln Financial ·{" "}
-            <span className="text-[#A41E34] font-extrabold drop-shadow-[0_0_8px_rgba(164,30,52,0.35)]">
+            State Farm ·{" "}
+            <span className="text-[#E31837] font-extrabold drop-shadow-[0_0_8px_rgba(227,24,55,0.35)]">
               FinMate
             </span>
           </motion.span>
@@ -84,13 +84,13 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
             <Button
               onClick={() => setModal("login")}
               variant="ghost"
-              className="rounded-full px-4 py-2 text-sm font-semibold text-[#7F1527] hover:bg-[#F9EDEA]"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[#E31837] hover:bg-[#FEF2F2]"
             >
               <LogIn className="mr-2 h-4 w-4" /> Log in
             </Button>
             <Button
               onClick={() => setModal("signup")}
-              className="rounded-full bg-[#A41E34] px-5 py-2 text-sm font-semibold text-white shadow-md shadow-[#A41E34]/25 hover:bg-[#7F1527]"
+              className="rounded-full bg-[#E31837] px-5 py-2 text-sm font-semibold text-white shadow-md shadow-[#E31837]/25 hover:bg-[#C41230]"
             >
               <UserPlus className="mr-2 h-4 w-4" /> Sign up
             </Button>
@@ -101,24 +101,23 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
         <main className="flex flex-col items-center gap-10 py-8 md:grid md:grid-cols-2 md:gap-12 md:py-14">
           <div className="w-full max-w-xl md:order-1 md:justify-self-start">
             <motion.p
-              className="text-xs font-semibold uppercase tracking-[0.5em] text-[#A41E34]/80"
+              className="text-xs font-semibold uppercase tracking-[0.5em] text-[#E31837]/80"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              AI-Powered Financial Guidance
+              AI-Powered Financial Wellness
             </motion.p>
-            <h1 className="mt-2 text-4xl font-semibold leading-tight text-[#1E0D0E] sm:text-5xl">
-              Your personalized financial roadmap starts here.
+            <h1 className="mt-2 text-4xl font-semibold leading-tight text-[#1A1A1A] sm:text-5xl">
+              Like a good neighbor, your financial future is here.
             </h1>
-            <p className="mt-3 max-w-lg text-base text-[#4D3B3B] sm:text-lg">
-              Get clear, actionable guidance on benefits, savings, and financial protection tailored to your life and
-              goals.
+            <p className="mt-3 max-w-lg text-base text-[#4B5563] sm:text-lg">
+              Get personalized guidance on insurance, savings, and emergency planning tailored to your life and goals.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button
                 size="lg"
-                className="w-full rounded-full bg-[#A41E34] py-6 text-base font-semibold text-white shadow-lg shadow-[#A41E34]/25 hover:bg-[#7F1527] sm:w-auto sm:px-10"
+                className="w-full rounded-full bg-[#E31837] py-6 text-base font-semibold text-white shadow-lg shadow-[#E31837]/25 hover:bg-[#C41230] sm:w-auto sm:px-10"
                 onClick={quizCompleted ? onViewInsights ?? onStart : onStart}
               >
                 {quizCompleted ? "Open insights" : "Start now"}
@@ -128,7 +127,7 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
                 size="lg"
                 variant="outline"
                 onClick={onDemo ?? onStart}
-                className="w-full rounded-full border-[#E7DADA] bg-white py-6 text-base font-semibold text-[#7F1527] hover:bg-[#F9EDEA] sm:w-auto sm:px-8"
+                className="w-full rounded-full border-[#E5E7EB] bg-white py-6 text-base font-semibold text-[#E31837] hover:bg-[#FEF2F2] sm:w-auto sm:px-8"
               >
                 <Sparkles className="mr-2 h-5 w-5" /> Try 2-min demo
               </Button>
@@ -141,32 +140,32 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="relative mx-auto w-full max-w-[540px] overflow-hidden rounded-[28px] border border-[#E7DADA] bg-white shadow-xl">
-              <div className="flex items-center justify-between border-b border-[#F0E6E7] px-5 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7F1527]">Preview</p>
+            <div className="relative mx-auto w-full max-w-[540px] overflow-hidden rounded-[28px] border border-[#E5E7EB] bg-white shadow-xl">
+              <div className="flex items-center justify-between border-b border-[#F3F4F6] px-5 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E31837]">Preview</p>
               </div>
 
               <div className="grid gap-4 p-5 sm:p-6">
                 {[
                   {
-                    title: "Compare health plans",
-                    body: "See PPO, HMO, and HDHP options — premiums, deductibles, and OOP limits in one place.",
+                    title: "Insurance recommendations",
+                    body: "Get personalized auto, home, and life insurance guidance based on your unique situation.",
                   },
                   {
-                    title: "Evaluate dental coverage",
-                    body: "Understand preventive care, orthodontics, and cost differences across dental plans.",
+                    title: "Emergency readiness score",
+                    body: "See how many months you could sustain if unexpected events happen, plus savings goals.",
                   },
                   {
-                    title: "Understand vision benefits",
-                    body: "Compare eyewear allowances, copays, and network coverage for you and your dependents.",
+                    title: "Financial literacy chat",
+                    body: "Ask questions about deductibles, premiums, coverage — get simple, clear answers.",
                   },
                 ].map((f) => (
                   <div
                     key={f.title}
-                    className="rounded-2xl border border-[#E7DADA] bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+                    className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
                   >
-                    <p className="text-sm font-semibold text-[#1E0D0E]">{f.title}</p>
-                    <p className="mt-1 text-xs text-[#4D3B3B]">{f.body}</p>
+                    <p className="text-sm font-semibold text-[#1A1A1A]">{f.title}</p>
+                    <p className="mt-1 text-xs text-[#4B5563]">{f.body}</p>
                   </div>
                 ))}
               </div>
@@ -180,13 +179,13 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
             {SPOTLIGHTS.map(({ stat, label, Icon }) => (
               <div
                 key={stat}
-                className="rounded-3xl border border-[#E7DADA] bg-white p-5 shadow-md flex flex-col"
+                className="rounded-3xl border border-[#E5E7EB] bg-white p-5 shadow-md flex flex-col"
               >
                 <div className="mb-1 flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-[#7F1527]" />
-                  <p className="text-2xl font-semibold text-[#1E0D0E]">{stat}</p>
+                  <Icon className="h-4 w-4 text-[#E31837]" />
+                  <p className="text-2xl font-semibold text-[#1A1A1A]">{stat}</p>
                 </div>
-                <p className="text-sm text-[#7F1527]">{label}</p>
+                <p className="text-sm text-[#E31837]">{label}</p>
               </div>
             ))}
           </div>
@@ -194,37 +193,37 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
 
         {/* === ABOUT + FAQ SECTION === */}
         <div className="mt-20 space-y-10">
-          <Card className="p-6 border-[#E7DADA]">
+          <Card className="p-6 border-[#E5E7EB]">
             <div className="flex items-center gap-3 mb-4">
-              <Info className="w-6 h-6 text-[#A41E34]" />
+              <Info className="w-6 h-6 text-[#E31837]" />
               <h2 className="text-2xl font-bold">About FinMate</h2>
             </div>
-            <p className="text-sm text-[#4D3B3B] leading-relaxed">
-              FinMate bridges personal context with real financial action, simplifying how people understand their
-              benefits and financial path. Built to empower financial well-being, FinMate transforms how employees and
-              individuals navigate major life changes by translating their unique situations into tailored advice and
-              priorities.
+            <p className="text-sm text-[#4B5563] leading-relaxed">
+              FinMate is your AI-powered financial wellness companion, designed to help underserved communities make confident 
+              financial decisions. We simplify insurance education, emergency planning, and budgeting tools — making financial 
+              literacy accessible to everyone. Like a good neighbor, we're here to help you plan for the unexpected.
             </p>
           </Card>
 
-          <Card className="p-6 border-[#E7DADA]">
+          <Card className="p-6 border-[#E5E7EB]">
             <div className="flex items-center gap-3 mb-4">
-              <HelpCircle className="w-6 h-6 text-[#A41E34]" />
+              <HelpCircle className="w-6 h-6 text-[#E31837]" />
               <h2 className="text-2xl font-bold">Frequently Asked Questions</h2>
             </div>
             <div className="space-y-4">
               {faqs.map((faq, i) => (
-                <div key={i} className="border-b border-[#E7DADA] pb-4 last:border-b-0">
-                  <h3 className="font-semibold text-[#1E0D0E] mb-2">{faq.question}</h3>
-                  <p className="text-sm text-[#4D3B3B] leading-relaxed">{faq.answer}</p>
+                <div key={i} className="border-b border-[#E5E7EB] pb-4 last:border-b-0">
+                  <h3 className="font-semibold text-[#1A1A1A] mb-2">{faq.question}</h3>
+                  <p className="text-sm text-[#4B5563] leading-relaxed">{faq.answer}</p>
                 </div>
               ))}
             </div>
           </Card>
 
-          <div className="text-center text-xs text-[#7F1527] space-y-1">
-            <p>Powered by AWS Bedrock · Built for Lincoln Financial</p>
-            <p>© 2025 FinMate. Empowering financial well-being through AI.</p>
+          <div className="text-center text-xs text-[#E31837] space-y-1">
+            <p>Powered by Google Gemini AI · Built for State Farm Hackathon</p>
+            <p>© 2026 FinMate. Empowering financial well-being through AI.</p>
+            <p className="text-[#6B7280] mt-2">Disclaimer: This is an educational tool, not financial advice.</p>
           </div>
         </div>
       </div>
@@ -243,17 +242,17 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-sm rounded-3xl border border-[#E7DADA] bg-white p-6 shadow-xl"
+        className="w-full max-w-sm rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-xl"
       >
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-semibold text-[#1E0D0E]">
+          <h2 className="text-xl font-semibold text-[#1A1A1A]">
             {modal === "login" ? "Log in to FinMate" : "Create an Account"}
           </h2>
           <button onClick={() => setModal(null)}>
-            <X className="h-5 w-5 text-[#7F1527]" />
+            <X className="h-5 w-5 text-[#E31837]" />
           </button>
         </div>
-        <p className="text-sm text-[#4D3B3B] mb-4">
+        <p className="text-sm text-[#4B5563] mb-4">
           {modal === "login"
             ? "Access your personalized insights instantly."
             : "Join FinMate and start building your plan."}
@@ -265,7 +264,7 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="mb-2 text-sm font-medium text-[#A41E34]"
+            className="mb-2 text-sm font-medium text-[#E31837]"
           >
             Invalid email or password
           </motion.p>
@@ -279,7 +278,7 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
             const password = (form.querySelector('input[type="password"]') as HTMLInputElement)?.value
 
             if (modal === "login") {
-              if (email === "chavasujay91@gmail.com" && password === "welcome1!") {
+              if (email === "demo@finmate.com" && password === "demo123") {
                 setInvalid(false)
                 setModal(null)
                 setTimeout(() => onViewInsights?.(), 300)
@@ -299,28 +298,31 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
               required
               type="text"
               placeholder="Full Name"
-              className="rounded-xl border border-[#E7DADA] bg-[#FBF7F6] px-4 py-3 text-sm"
+              className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-sm focus:border-[#E31837] focus:outline-none focus:ring-1 focus:ring-[#E31837]"
             />
           )}
           <input
             required
             type="email"
             placeholder="Email"
-            className="rounded-xl border border-[#E7DADA] bg-[#FBF7F6] px-4 py-3 text-sm"
+            className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-sm focus:border-[#E31837] focus:outline-none focus:ring-1 focus:ring-[#E31837]"
           />
           <input
             required
             type="password"
             placeholder="Password"
-            className="rounded-xl border border-[#E7DADA] bg-[#FBF7F6] px-4 py-3 text-sm"
+            className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-sm focus:border-[#E31837] focus:outline-none focus:ring-1 focus:ring-[#E31837]"
           />
           <Button
             type="submit"
-            className="mt-2 rounded-full bg-[#A41E34] py-3 text-sm font-semibold text-white hover:bg-[#7F1527]"
+            className="mt-2 rounded-full bg-[#E31837] py-3 text-sm font-semibold text-white hover:bg-[#C41230]"
           >
             {modal === "login" ? "Log In" : "Sign Up"}
           </Button>
         </form>
+        <p className="mt-3 text-xs text-center text-[#6B7280]">
+          Demo: demo@finmate.com / demo123
+        </p>
       </motion.div>
     </motion.div>
   )}

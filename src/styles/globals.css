@@ -4,32 +4,32 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Lincoln Financial brand colors with modern glassmorphism palette */
-  --background: oklch(0.98 0.01 30);
-  --foreground: oklch(0.15 0.02 30);
-  --card: oklch(1 0 0 / 0.7);
-  --card-foreground: oklch(0.15 0.02 30);
-  --popover: oklch(1 0 0 / 0.95);
-  --popover-foreground: oklch(0.15 0.02 30);
+  /* State Farm brand colors - clean, professional, trustworthy */
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.13 0.01 0);
+  --card: oklch(1 0 0 / 0.85);
+  --card-foreground: oklch(0.13 0.01 0);
+  --popover: oklch(1 0 0 / 0.98);
+  --popover-foreground: oklch(0.13 0.01 0);
 
-  /* Lincoln Financial primary red #A41E34 */
-  --primary: oklch(0.45 0.18 25);
+  /* State Farm primary red #E31837 */
+  --primary: oklch(0.5 0.22 25);
   --primary-foreground: oklch(0.99 0 0);
 
-  /* Accent orange #FF4F00 */
-  --accent: oklch(0.65 0.2 45);
+  /* State Farm secondary - darker red #C41230 for hover states */
+  --accent: oklch(0.45 0.2 25);
   --accent-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.95 0.01 30);
-  --secondary-foreground: oklch(0.15 0.02 30);
-  --muted: oklch(0.93 0.01 30);
-  --muted-foreground: oklch(0.5 0.01 30);
+  --secondary: oklch(0.97 0.005 0);
+  --secondary-foreground: oklch(0.13 0.01 0);
+  --muted: oklch(0.95 0.005 0);
+  --muted-foreground: oklch(0.45 0.01 0);
 
-  --destructive: oklch(0.55 0.22 25);
+  --destructive: oklch(0.5 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.88 0.01 30 / 0.3);
-  --input: oklch(0.88 0.01 30 / 0.5);
-  --ring: oklch(0.45 0.18 25);
+  --border: oklch(0.9 0.005 0 / 0.5);
+  --input: oklch(0.9 0.005 0 / 0.6);
+  --ring: oklch(0.5 0.22 25);
 
   --radius: 1rem;
   --glass-bg: oklch(1 0 0 / 0.1);
@@ -89,9 +89,10 @@
 }
 
 @theme inline {
-  --font-sans: "Avenir Next", "Avenir Next LT Pro", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-heading: "Avenir Next Demi", "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "Courier New", Courier, monospace;
+  /* State Farm uses clean sans-serif typography */
+  --font-sans: "Inter", "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-heading: "Inter", "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -138,7 +139,7 @@
     font-family: var(--font-sans);
     @apply bg-background text-foreground;
   }
-  /* Apply Lincoln Financial heading font to headings */
+  /* State Farm heading styles - bold, clean */
   h1,
   h2,
   h3,
@@ -146,6 +147,7 @@
   h5,
   h6 {
     font-family: var(--font-heading);
+    font-weight: 600;
   }
 }
 
