@@ -2,10 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, RotateCcw, HelpCircle, Volume2 } from "lucide-react"
-
-// AI Avatar image (using a placeholder - in real app would be actual image)
-const MAYA_AVATAR = "/maya-avatar.png"
+import { ChevronLeft, RotateCcw, HelpCircle, Volume2, Sparkles } from "lucide-react"
 
 interface Message {
   id: string
