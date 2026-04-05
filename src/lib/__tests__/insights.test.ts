@@ -38,4 +38,28 @@ describe("insights generation", () => {
     expect(merged).toHaveLength(2)
     expect(merged[1]).toMatchObject({ speaker: "You", message: "Thanks" })
   })
+
+  it("adapts insight copy by guidance preference", () => {
+    const summaryInsights = buildInsights({
+      ...SAMPLE_COMPLETED_FORM,
+      guidancePreference: "summary",
+    })
+    const stepInsights = buildInsights({
+      ...SAMPLE_COMPLETED_FORM,
+      guidancePreference: "step",
+    })
+    const chatInsights = buildInsights({
+      ...SAMPLE_COMPLETED_FORM,
+      guidancePreference: "chat",
+    })
+
+    expect(stepInsights.statement.toLowerCase()).toContain("step-by-step")
+    expect(stepInsights.timeline[0]?.description.toLowerCase()).toContain("step 1")
+
+    expect(chatInsights.statement.toLowerCase()).toContain("chat-first")
+    expect(chatInsights.timeline[0]?.description.toLowerCase()).toContain("ask sowsmart in chat")
+
+    expect(summaryInsights.statement).not.toEqual(stepInsights.statement)
+    expect(summaryInsights.prompts[0]).not.toEqual(chatInsights.prompts[0])
+  })
 })

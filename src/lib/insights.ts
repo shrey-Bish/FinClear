@@ -390,7 +390,7 @@ export function buildInsights(enrollment: EnrollmentFormData): SowSmartInsights 
   const topPriority = priorityBenefits[0]
   const secondaryPriority = priorityBenefits[1]
 
-  const conversation: SowSmartInsights["conversation"] = [
+  const defaultConversation: SowSmartInsights["conversation"] = [
     {
       speaker: "SowSmart",
       message: `Hi ${data.preferredName || data.fullName}, let’s prioritize ${topPriority ? topPriority.title.toLowerCase() : "your benefits"} together.`,
@@ -404,13 +404,80 @@ export function buildInsights(enrollment: EnrollmentFormData): SowSmartInsights 
     },
   ]
 
-  const prompts = [
+  const defaultPrompts = [
     topPriority ? `How do I get started with ${topPriority.title.toLowerCase()}?` : "What should I do first?",
     secondaryPriority
       ? `What paperwork do I need for ${secondaryPriority.title.toLowerCase()}?`
       : "Can you remind me about upcoming deadlines?",
     "Can you summarize my next enrollment dates?",
   ]
+
+  const defaultStatement = topPriority
+    ? `SowSmart mapped your answers to highlight ${topPriority.title.toLowerCase()} first, based on a risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`
+    : `SowSmart analyzed your profile and mapped benefits around your risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`
+
+  const insightCopy = (() => {
+    if (data.guidancePreference === "step") {
+      return {
+        statement: topPriority
+          ? `SowSmart prepared a step-by-step plan focused on ${topPriority.title.toLowerCase()}, tuned to your risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`
+          : `SowSmart prepared a step-by-step plan using your risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`,
+        timeline: trimmedTimeline.map((item, index) => ({
+          ...item,
+          description: `Step ${index + 1}: ${item.description}`,
+        })),
+        conversation: [
+          {
+            speaker: "SowSmart" as const,
+            message: `Hi ${data.preferredName || data.fullName}, we’ll tackle this in clear steps starting with ${topPriority ? topPriority.title.toLowerCase() : "your top priority"}.`,
+          },
+          {
+            speaker: "SowSmart" as const,
+            message: "I’ll guide you one action at a time so you can complete each milestone without guesswork.",
+          },
+        ],
+        prompts: [
+          topPriority ? `What is step 1 for ${topPriority.title.toLowerCase()}?` : "What is my step 1?",
+          secondaryPriority ? `What should I prepare for step 2: ${secondaryPriority.title.toLowerCase()}?` : "What is step 2?",
+          "Show me the exact sequence for this week.",
+        ],
+      }
+    }
+
+    if (data.guidancePreference === "chat") {
+      return {
+        statement: topPriority
+          ? `SowSmart set up chat-first guidance centered on ${topPriority.title.toLowerCase()}, tailored to your risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`
+          : `SowSmart set up chat-first guidance using your risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`,
+        timeline: trimmedTimeline.map((item) => ({
+          ...item,
+          description: `${item.description} Ask SowSmart in chat when you’re ready for this step.`,
+        })),
+        conversation: [
+          {
+            speaker: "SowSmart" as const,
+            message: `Hi ${data.preferredName || data.fullName}, let’s keep this conversational while we work through ${topPriority ? topPriority.title.toLowerCase() : "your priorities"}.`,
+          },
+          {
+            speaker: "SowSmart" as const,
+            message: "You can ask follow-ups at any point and I’ll adapt guidance in real time.",
+          },
+        ],
+        prompts: [
+          topPriority ? `Can we talk through ${topPriority.title.toLowerCase()} in plain language?` : "Can we talk through my top priority?",
+          "What should I ask HR about first?",
+          "Can you simplify my choices before I decide?",
+        ],
+      }
+    }
+
+    return {
+      statement: defaultStatement,
+      timeline: trimmedTimeline,
+      conversation: defaultConversation,
+      prompts: defaultPrompts,
+    }
+  })()
 
   const recommendedPlans = priorityBenefits.map((benefit) => ({
     id: benefit.id,
@@ -422,12 +489,10 @@ export function buildInsights(enrollment: EnrollmentFormData): SowSmartInsights 
   return {
     ownerName: data.preferredName || data.fullName,
     focusGoal: theme.focus,
-    statement: topPriority
-      ? `SowSmart mapped your answers to highlight ${topPriority.title.toLowerCase()} first, based on a risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`
-      : `SowSmart analyzed your profile and mapped benefits around your risk comfort of ${data.riskComfort}/5 and credit score of ${data.creditScore}.`,
-    timeline: trimmedTimeline,
-    conversation,
-    prompts,
+    statement: insightCopy.statement,
+    timeline: insightCopy.timeline,
+    conversation: insightCopy.conversation,
+    prompts: insightCopy.prompts,
     plans,
     recommendedPlans,
     selectedPlanId: plans[1]?.planId ?? plans[0]?.planId ?? null,
