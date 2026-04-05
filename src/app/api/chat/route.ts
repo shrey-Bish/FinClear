@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { retrieveRelevantKnowledge, formatKnowledgeContext } from "@/lib/rag/knowledge-base"
+import {
+  formatOnboardingKnowledge,
+  retrieveOnboardingKnowledge,
+  summarizeQuestionSchema,
+} from "@/lib/rag/onboarding-knowledge"
 
 export const runtime = "nodejs"
 
@@ -9,12 +14,7 @@ type ChatRequest = {
   userId?: string
   sessionId?: string
   context?: Record<string, unknown>
-  userProfile?: {
-    age?: number
-    income?: string
-    dependents?: number
-    riskTolerance?: number
-  }
+  userProfile?: Record<string, unknown>
 }
 type ChatOK = { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string; suggestions?: string[] }
 type ChatERR = { error: string; detail?: unknown; status?: number }
@@ -100,17 +100,21 @@ TONE: Like a helpful neighbor who happens to know a lot about insurance - friend
 function buildPromptWithRAG(userPrompt: string, userProfile?: ChatRequest["userProfile"]): { prompt: string; sources: string[] } {
   // Retrieve relevant knowledge
   const relevantDocs = retrieveRelevantKnowledge(userPrompt, 3)
+  const onboardingDocs = retrieveOnboardingKnowledge((userProfile ?? {}) as Record<string, unknown>, 5)
   const knowledgeContext = formatKnowledgeContext(relevantDocs)
-  const sources = relevantDocs.map(d => d.title)
+  const onboardingContext = formatOnboardingKnowledge(onboardingDocs)
+  const questionSchema = summarizeQuestionSchema()
+  const sources = [...relevantDocs.map((d) => d.title), ...onboardingDocs.map((d) => d.title)]
 
   // Build personalized context if profile available
   let profileContext = ""
   if (userProfile) {
     const parts: string[] = []
-    if (userProfile.age) parts.push(`Age: ${userProfile.age}`)
-    if (userProfile.income) parts.push(`Income range: ${userProfile.income}`)
-    if (userProfile.dependents !== undefined) parts.push(`Dependents: ${userProfile.dependents}`)
-    if (userProfile.riskTolerance) parts.push(`Risk tolerance: ${userProfile.riskTolerance}/5`)
+    Object.entries(userProfile).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== "") {
+        parts.push(`${key}: ${String(value)}`)
+      }
+    })
     if (parts.length > 0) {
       profileContext = `\nUSER PROFILE (use to personalize advice):\n${parts.join(", ")}\n`
     }
@@ -118,7 +122,11 @@ function buildPromptWithRAG(userPrompt: string, userProfile?: ChatRequest["userP
 
   const fullPrompt = `${SYSTEM_PROMPT}
 
-${knowledgeContext}${profileContext}
+${knowledgeContext}
+
+${onboardingContext}
+
+${questionSchema}${profileContext}
 USER QUESTION: ${userPrompt}
 
 Please provide a helpful, clear response. If the knowledge base above contains relevant information, use it to inform your answer. Always be honest about limitations.`
