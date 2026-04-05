@@ -56,10 +56,16 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "")
+      const isPaymentRequired = response.status === 402
       return NextResponse.json(
         {
-          error: "ElevenLabs synthesis failed",
+          error: isPaymentRequired
+            ? "ElevenLabs payment required"
+            : "ElevenLabs synthesis failed",
           detail: detail || `HTTP ${response.status}`,
+          hint: isPaymentRequired
+            ? "Check your ElevenLabs plan, credits, and API key permissions. Webhooks are not required for TTS playback."
+            : undefined,
         },
         { status: response.status }
       )

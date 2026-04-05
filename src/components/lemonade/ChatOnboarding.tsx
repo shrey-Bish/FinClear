@@ -14,7 +14,7 @@ import {
   getQuestionContent,
   type Question,
 } from "@/config/questions"
-import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "@/lib/voice"
+import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "../../lib/voice"
 
 const PENDING_SIGNUP_KEY = "sowsmart_pending_signup"
 
@@ -262,7 +262,7 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
           JSON.stringify({ email: normalizedEmail, data: answersPayload })
         )
       }
-      router.push(`/login?email=${encodeURIComponent(normalizedEmail)}`)
+      router.push(`/login?email=${encodeURIComponent(normalizedEmail)}&callbackUrl=%2Frecommendations`)
       return
     }
 
@@ -283,7 +283,7 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
 
     if (!loginResult?.ok) {
       setAuthError("Account created, but login failed. Please go to Login.")
-      router.push(`/login?email=${encodeURIComponent(normalizedEmail)}`)
+      router.push(`/login?email=${encodeURIComponent(normalizedEmail)}&callbackUrl=%2Frecommendations`)
       return
     }
 

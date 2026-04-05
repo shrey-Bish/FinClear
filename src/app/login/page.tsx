@@ -6,6 +6,11 @@ import { signIn, useSession } from "next-auth/react"
 import { ChevronDown, KeyRound } from "lucide-react"
 
 const PENDING_SIGNUP_KEY = "sowsmart_pending_signup"
+const DEFAULT_CALLBACK_URL = "/recommendations"
+
+function isSafeInternalPath(path: string) {
+  return path.startsWith("/") && !path.startsWith("//")
+}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -17,12 +22,24 @@ export default function LoginPage() {
   const [pendingData, setPendingData] = useState<Record<string, any> | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [step, setStep] = useState<"email" | "password">("email")
+  const [callbackUrl, setCallbackUrl] = useState(DEFAULT_CALLBACK_URL)
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace("/recommendations")
+      router.replace(callbackUrl)
     }
-  }, [router, status])
+  }, [callbackUrl, router, status])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const params = new URLSearchParams(window.location.search)
+    const incomingCallbackUrl = params.get("callbackUrl")
+
+    if (incomingCallbackUrl && isSafeInternalPath(incomingCallbackUrl)) {
+      setCallbackUrl(incomingCallbackUrl)
+    }
+  }, [])
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -99,11 +116,11 @@ export default function LoginPage() {
       return
     }
 
-    router.push("/recommendations")
+    router.push(callbackUrl)
   }
 
   const handleGoogleLogin = async () => {
-    await signIn("google", { callbackUrl: "/recommendations" })
+    await signIn("google", { callbackUrl })
   }
 
   return (

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { ChevronLeft, Volume2, MessageCircle, ArrowRight, Check, Phone, Shield, Car, Home, Heart, HelpCircle } from "lucide-react"
-import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "@/lib/voice"
+import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "../../lib/voice"
 
 interface InsightsPageProps {
   userData: Record<string, any>

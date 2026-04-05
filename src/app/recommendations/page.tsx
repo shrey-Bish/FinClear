@@ -6,9 +6,11 @@ import { signOut, useSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import { ArrowUp, AudioLines, CirclePlus, Loader2, LogOut, Sparkles, Volume2 } from "lucide-react"
 
-import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "@/lib/voice"
+import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "../../lib/voice"
+import { readStorage } from "../../lib/storage"
 
 const PENDING_SIGNUP_KEY = "sowsmart_pending_signup"
+const USER_DATA_KEY = "sowsmart_user_data"
 
 type RecommendationPayload = {
   recommendationTitle: string
@@ -55,7 +57,7 @@ export default function RecommendationsPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.replace("/login")
+      router.replace("/login?callbackUrl=%2Frecommendations")
     }
   }, [router, status])
 
@@ -63,29 +65,70 @@ export default function RecommendationsPage() {
     if (status !== "authenticated") return
 
     const syncAndFetch = async () => {
+      const readFallbackProfile = () => {
+        if (typeof window === "undefined") return null
+
+        const storedUserData = readStorage<Record<string, any> | null>(USER_DATA_KEY, null)
+        if (storedUserData && Object.keys(storedUserData).length > 0) {
+          return storedUserData
+        }
+
+        const pending = window.sessionStorage.getItem(PENDING_SIGNUP_KEY)
+        if (!pending) return null
+
+        try {
+          const parsed = JSON.parse(pending) as { data?: Record<string, any> }
+          return parsed.data && Object.keys(parsed.data).length > 0 ? parsed.data : null
+        } catch {
+          return null
+        }
+      }
+
       if (typeof window !== "undefined") {
         const raw = window.sessionStorage.getItem(PENDING_SIGNUP_KEY)
         if (raw) {
           try {
             const parsed = JSON.parse(raw) as { data?: Record<string, any> }
             if (parsed.data) {
-              await fetch("/api/profile", {
+              const response = await fetch("/api/profile", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ profile: parsed.data }),
               })
+              if (!response.ok) {
+                setProfile(parsed.data)
+              }
             }
             window.sessionStorage.removeItem(PENDING_SIGNUP_KEY)
           } catch {
+            const fallbackProfile = readFallbackProfile()
+            if (fallbackProfile) {
+              setProfile(fallbackProfile)
+            }
             // Ignore malformed temporary onboarding cache.
           }
         }
       }
 
       const response = await fetch("/api/profile")
-      if (!response.ok) return
+      if (!response.ok) {
+        const fallbackProfile = readFallbackProfile()
+        if (fallbackProfile) {
+          setProfile(fallbackProfile)
+        }
+        return
+      }
+
       const payload = (await response.json()) as { profile: Record<string, any> | null }
-      setProfile(payload.profile)
+      if (payload.profile) {
+        setProfile(payload.profile)
+        return
+      }
+
+      const fallbackProfile = readFallbackProfile()
+      if (fallbackProfile) {
+        setProfile(fallbackProfile)
+      }
     }
 
     void syncAndFetch()

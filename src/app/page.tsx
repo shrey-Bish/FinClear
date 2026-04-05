@@ -83,7 +83,7 @@ export default function Home() {
   }
 
   const handleLogin = () => {
-    router.push("/login")
+    router.push("/login?callbackUrl=%2Frecommendations")
   }
 
   // Handle back navigation

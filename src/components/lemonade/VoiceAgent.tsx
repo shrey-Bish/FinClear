@@ -20,7 +20,7 @@ import {
   getFilteredQuestions,
   getQuestionContent,
 } from "@/config/questions"
-import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "@/lib/voice"
+import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "../../lib/voice"
 
 declare global {
   interface Window {
