@@ -134,6 +134,7 @@ export default function Home() {
             <LandingPage
               onStart={handleStart}
               onLogin={handleStart}
+              onVoiceComplete={handleOnboardingComplete}
             />
           </motion.div>
         )}

@@ -1,16 +1,33 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, Menu } from "lucide-react"
+import { ArrowRight, Menu, Mic, MessageSquare } from "lucide-react"
+import { VoiceAgent } from "./VoiceAgent"
 
 interface LandingPageProps {
   onStart: () => void
+  onStartVoice?: () => void
   onLogin?: () => void
+  onVoiceComplete?: (data: Record<string, any>) => void
 }
 
-export function LandingPage({ onStart, onLogin }: LandingPageProps) {
+export function LandingPage({ onStart, onStartVoice, onLogin, onVoiceComplete }: LandingPageProps) {
+  const [showVoiceAgent, setShowVoiceAgent] = useState(false)
+
+  const handleVoiceComplete = (data: Record<string, any>) => {
+    setShowVoiceAgent(false)
+    onVoiceComplete?.(data)
+  }
+
   return (
     <div className="min-h-screen bg-white">
+      {/* Voice Agent Modal */}
+      <VoiceAgent 
+        isOpen={showVoiceAgent} 
+        onClose={() => setShowVoiceAgent(false)}
+        onComplete={handleVoiceComplete}
+      />
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 md:px-12">
         <nav className="hidden md:flex items-center gap-8 text-sm text-gray-600">
@@ -94,17 +111,42 @@ export function LandingPage({ onStart, onLogin }: LandingPageProps) {
             Instant everything. Incredible prices. Big heart.
           </motion.p>
           
-          <motion.button
-            onClick={onStart}
-            className="mt-10 bg-[#FF0080] text-white text-lg font-medium px-10 py-4 rounded-lg hover:bg-[#E60073] transition-all hover:scale-105 shadow-lg shadow-pink-500/25"
+          {/* Two CTA buttons - Chat and Voice */}
+          <motion.div
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
-            CHECK OUR PRICES
-          </motion.button>
+            <motion.button
+              onClick={onStart}
+              className="bg-[#FF0080] text-white text-lg font-medium px-8 py-4 rounded-lg hover:bg-[#E60073] transition-all shadow-lg shadow-pink-500/25 flex items-center gap-3"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <MessageSquare className="w-5 h-5" />
+              Text Chat
+            </motion.button>
+            
+            <motion.button
+              onClick={() => setShowVoiceAgent(true)}
+              className="bg-gray-900 text-white text-lg font-medium px-8 py-4 rounded-lg hover:bg-gray-800 transition-all shadow-lg flex items-center gap-3"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Mic className="w-5 h-5" />
+              Talk to Maya
+            </motion.button>
+          </motion.div>
+          
+          <motion.p
+            className="mt-4 text-sm text-gray-400"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            Choose your style — same great coverage either way
+          </motion.p>
         </div>
       </main>
 
@@ -292,16 +334,48 @@ export function LandingPage({ onStart, onLogin }: LandingPageProps) {
           >
             2 minutes. That's all it takes to find out what coverage you need.
           </motion.p>
-          <motion.button
-            onClick={onStart}
-            className="bg-[#FF0080] text-white text-lg font-medium px-10 py-4 rounded-lg hover:bg-[#E60073] transition-all flex items-center gap-2 mx-auto"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
           >
-            Let's do this <ArrowRight className="w-5 h-5" />
-          </motion.button>
+            <motion.button
+              onClick={onStart}
+              className="bg-[#FF0080] text-white text-lg font-medium px-8 py-4 rounded-lg hover:bg-[#E60073] transition-all flex items-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <MessageSquare className="w-5 h-5" />
+              Start Text Chat
+            </motion.button>
+            <span className="text-gray-400">or</span>
+            <motion.button
+              onClick={() => setShowVoiceAgent(true)}
+              className="bg-gray-900 text-white text-lg font-medium px-8 py-4 rounded-lg hover:bg-gray-800 transition-all flex items-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Mic className="w-5 h-5" />
+              Talk to Maya
+            </motion.button>
+          </motion.div>
         </div>
       </section>
+
+      {/* Floating Voice Button */}
+      <motion.button
+        onClick={() => setShowVoiceAgent(true)}
+        className="fixed bottom-6 right-6 bg-gray-900 hover:bg-gray-800 text-white p-4 rounded-full shadow-xl flex items-center gap-2 z-40"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1, type: "spring" }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Mic className="w-6 h-6" />
+        <span className="hidden sm:inline pr-1">Talk to Maya</span>
+      </motion.button>
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-8">

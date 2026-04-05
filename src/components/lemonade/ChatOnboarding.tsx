@@ -2,38 +2,37 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, RotateCcw, HelpCircle, Volume2, VolumeX, Mic, MessageSquare } from "lucide-react"
+import { ChevronLeft, HelpCircle, Volume2, VolumeX, Mic, MessageSquare } from "lucide-react"
+import { 
+  QUESTIONS, 
+  MAYA_INTRO, 
+  COMPLETION_MESSAGE, 
+  PROGRESS_STEPS,
+  getQuestionContent, 
+  getFilteredQuestions as getFilteredQuestionsFromConfig,
+  type Question 
+} from "@/config/questions"
 
 interface Message {
   id: string
   type: "ai" | "user"
   content: string
-  options?: ChatOption[]
+  options?: Array<{
+    label: string
+    value: string
+    icon?: string
+    badge?: string
+    description?: string
+  }>
   inputType?: "text" | "select" | "multi-select"
   inputPlaceholder?: string
   field?: string
-}
-
-interface ChatOption {
-  label: string
-  value: string
-  icon?: string
-  badge?: string
-  description?: string
 }
 
 interface ChatOnboardingProps {
   onComplete: (data: Record<string, any>) => void
   onBack: () => void
 }
-
-// Progress steps
-const STEPS = [
-  { id: "mode", label: "Start" },
-  { id: "basics", label: "About you" },
-  { id: "coverage", label: "Coverage" },
-  { id: "quote", label: "Your quote" },
-]
 
 export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   const [messages, setMessages] = useState<Message[]>([])
@@ -46,127 +45,26 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   const [modeSelected, setModeSelected] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // State Farm focused questions
-  const questions: Message[] = [
-    {
-      id: "name",
+  // Convert config questions to chat messages
+  const questionToMessage = (q: Question, data: Record<string, string>): Message => {
+    const content = questionIndex === 0 
+      ? `${MAYA_INTRO.text}\n\n${getQuestionContent(q, data, voiceMode)}`
+      : getQuestionContent(q, data, voiceMode)
+    
+    return {
+      id: q.id,
       type: "ai",
-      content: "Hey! I'm Maya. 👋\n\nI'll help you find the perfect State Farm coverage in about 2 minutes.\n\nFirst, what's your name?",
-      inputType: "text",
-      inputPlaceholder: "Your first name",
-      field: "firstName",
-    },
-    {
-      id: "age",
-      type: "ai",
-      content: "Nice to meet you, {firstName}! 🎉\n\nHow old are you?",
-      options: [
-        { label: "18-24", value: "18-24", icon: "🎓", description: "Just starting out" },
-        { label: "25-34", value: "25-34", icon: "💼", description: "Building career" },
-        { label: "35-44", value: "35-44", icon: "🏠", description: "Settling down" },
-        { label: "45+", value: "45+", icon: "🌟", description: "Experienced" },
-      ],
-      field: "ageRange",
-    },
-    {
-      id: "insurance_type",
-      type: "ai",
-      content: "State Farm offers tons of coverage options.\n\nWhat do you need help with today?",
-      options: [
-        { label: "RENTERS", value: "renters", icon: "🏠", badge: "POPULAR", description: "Protect your stuff" },
-        { label: "AUTO", value: "auto", icon: "🚗", description: "Coverage for your ride" },
-        { label: "LIFE", value: "life", icon: "👨‍👩‍👧", description: "Protect loved ones" },
-        { label: "NOT SURE", value: "unsure", icon: "🤔", description: "Help me figure it out" },
-      ],
-      field: "insuranceType",
-    },
-    {
-      id: "housing",
-      type: "ai",
-      content: "Got it! Where do you currently live?",
-      options: [
-        { label: "Renting apartment", value: "renting_apartment", icon: "🏢" },
-        { label: "Renting house", value: "renting_house", icon: "🏡" },
-        { label: "Living with family", value: "with_family", icon: "👨‍👩‍👧" },
-        { label: "Own my place", value: "own", icon: "🔑" },
-      ],
-      field: "housingStatus",
-    },
-    {
-      id: "has_car",
-      type: "ai",
-      content: "Do you have a car?",
-      options: [
-        { label: "Yes, I drive", value: "yes", icon: "🚗" },
-        { label: "No car", value: "no", icon: "🚶" },
-        { label: "Planning to get one", value: "planning", icon: "📝" },
-      ],
-      field: "hasCar",
-    },
-    {
-      id: "car_type",
-      type: "ai",
-      content: "What kind of car do you drive?",
-      options: [
-        { label: "Used/older car", value: "used", icon: "🚙", description: "Over 5 years old" },
-        { label: "Newer car", value: "newer", icon: "🚘", description: "Under 5 years" },
-        { label: "Financed/leased", value: "financed", icon: "💳", description: "Still paying" },
-      ],
-      field: "carType",
-    },
-    {
-      id: "biggest_worry",
-      type: "ai",
-      content: "What keeps you up at night? (Insurance-wise 😄)",
-      options: [
-        { label: "Theft/break-in", value: "theft", icon: "🔒" },
-        { label: "Car accident", value: "car_accident", icon: "💥" },
-        { label: "Medical bills", value: "medical", icon: "🏥" },
-        { label: "No savings", value: "savings", icon: "💸" },
-      ],
-      field: "biggestWorry",
-    },
-    {
-      id: "budget",
-      type: "ai",
-      content: "What's your monthly budget for insurance?",
-      options: [
-        { label: "Under $50", value: "under_50", description: "Keep it minimal" },
-        { label: "$50-100", value: "50_100", badge: "MOST COMMON" },
-        { label: "$100-200", value: "100_200", description: "Solid coverage" },
-        { label: "$200+", value: "200_plus", description: "Full protection" },
-      ],
-      field: "budget",
-    },
-    {
-      id: "existing",
-      type: "ai",
-      content: "Do you have any insurance right now?",
-      options: [
-        { label: "Nope, starting fresh", value: "none", icon: "✨" },
-        { label: "Through my job", value: "employer", icon: "🏢" },
-        { label: "Parents' plan", value: "parents", icon: "👨‍👩‍👧" },
-        { label: "Have my own", value: "own", icon: "📄" },
-      ],
-      field: "existingCoverage",
-    },
-    {
-      id: "complete",
-      type: "ai",
-      content: "Perfect! 🎯 I've got everything I need.\n\nLet me crunch some numbers and find the best State Farm coverage for you...",
-      field: "complete",
-    },
-  ]
+      content,
+      options: q.options,
+      inputType: q.inputType,
+      inputPlaceholder: q.inputPlaceholder,
+      field: q.field,
+    }
+  }
 
   // Filter questions based on user answers
   const getFilteredQuestions = () => {
-    return questions.filter(q => {
-      // Skip car type question if user doesn't have a car
-      if (q.id === "car_type" && userData.hasCar === "no") {
-        return false
-      }
-      return true
-    })
+    return getFilteredQuestionsFromConfig(userData)
   }
 
   // Scroll to bottom when messages change
@@ -178,29 +76,29 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   useEffect(() => {
     if (!modeSelected) return
     const timer = setTimeout(() => {
-      addAiMessage(getFilteredQuestions()[0])
+      const filteredQs = getFilteredQuestions()
+      if (filteredQs.length > 0) {
+        addAiMessage(questionToMessage(filteredQs[0], userData))
+      }
     }, 500)
     return () => clearTimeout(timer)
   }, [modeSelected])
 
-  const addAiMessage = (question: Message) => {
+  const addAiMessage = (message: Message) => {
     setIsTyping(true)
-    
-    // Replace placeholders in content
-    let content = question.content
-    Object.entries(userData).forEach(([key, value]) => {
-      content = content.replace(`{${key}}`, value as string)
-    })
     
     const delay = voiceMode ? 1200 : 800 // Longer delay for voice mode feel
     
     setTimeout(() => {
       setIsTyping(false)
-      setMessages(prev => [...prev, { ...question, content }])
+      setMessages(prev => [...prev, message])
       
-      // In voice mode, simulate reading the message
-      if (voiceMode && question.type === "ai") {
-        // Future: ElevenLabs TTS integration here
+      // In voice mode, use Web Speech API to read the message
+      if (voiceMode && "speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(message.content.replace(/[👋🎉🎯😄]/g, ''))
+        utterance.rate = 1.0
+        utterance.pitch = 1.1
+        window.speechSynthesis.speak(utterance)
       }
     }, delay)
   }
@@ -214,14 +112,18 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
     setMessages(prev => [...prev, newMessage])
   }
 
-  const handleOptionSelect = (option: ChatOption, field?: string) => {
+  const handleOptionSelect = (option: { label: string; value: string }, field?: string) => {
     addUserMessage(option.label)
     
+    const newUserData = field 
+      ? { ...userData, [field]: option.value }
+      : userData
+    
     if (field) {
-      setUserData(prev => ({ ...prev, [field]: option.value }))
+      setUserData(newUserData)
     }
     
-    const filteredQuestions = getFilteredQuestions()
+    const filteredQuestions = getFilteredQuestionsFromConfig(newUserData)
     const nextIndex = questionIndex + 1
     setQuestionIndex(nextIndex)
     
@@ -232,30 +134,41 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
       setCurrentStep(3)
     }
     
-    // Find next valid question
-    let actualNextIndex = nextIndex
-    while (actualNextIndex < questions.length) {
-      const nextQ = questions[actualNextIndex]
-      if (nextQ.id === "car_type" && option.value === "no") {
-        actualNextIndex++
-        setQuestionIndex(actualNextIndex)
-        continue
-      }
-      break
-    }
-    
-    if (actualNextIndex < questions.length) {
+    if (nextIndex < filteredQuestions.length) {
       setTimeout(() => {
-        const nextQuestion = questions[actualNextIndex]
-        if (nextQuestion.field === "complete") {
-          addAiMessage(nextQuestion)
+        const nextQuestion = filteredQuestions[nextIndex]
+        // Check if this is the last question
+        if (nextIndex === filteredQuestions.length - 1) {
+          // Show completion message after the last question
+          addAiMessage(questionToMessage(nextQuestion, newUserData))
           setTimeout(() => {
-            onComplete({ ...userData, voiceMode })
-          }, 2000)
+            const completeMessage: Message = {
+              id: "complete",
+              type: "ai",
+              content: COMPLETION_MESSAGE.text,
+              field: "complete",
+            }
+            addAiMessage(completeMessage)
+            setTimeout(() => {
+              onComplete({ ...newUserData, voiceMode })
+            }, 2000)
+          }, 1500)
         } else {
-          addAiMessage(nextQuestion)
+          addAiMessage(questionToMessage(nextQuestion, newUserData))
         }
       }, 300)
+    } else {
+      // Complete - no more questions
+      const completeMessage: Message = {
+        id: "complete",
+        type: "ai",
+        content: COMPLETION_MESSAGE.text,
+        field: "complete",
+      }
+      addAiMessage(completeMessage)
+      setTimeout(() => {
+        onComplete({ ...newUserData, voiceMode })
+      }, 2000)
     }
   }
 
@@ -263,12 +176,17 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
     e.preventDefault()
     if (!inputValue.trim()) return
     
-    const currentQuestion = getFilteredQuestions()[questionIndex]
+    const filteredQs = getFilteredQuestions()
+    const currentQuestion = filteredQs[questionIndex]
     
     addUserMessage(inputValue)
     
-    if (currentQuestion.field) {
-      setUserData(prev => ({ ...prev, [currentQuestion.field!]: inputValue }))
+    const newUserData = currentQuestion?.field 
+      ? { ...userData, [currentQuestion.field]: inputValue }
+      : userData
+    
+    if (currentQuestion?.field) {
+      setUserData(newUserData)
     }
     
     setInputValue("")
@@ -277,10 +195,24 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
     const nextIndex = questionIndex + 1
     setQuestionIndex(nextIndex)
     
-    if (nextIndex < getFilteredQuestions().length) {
+    const updatedFilteredQs = getFilteredQuestionsFromConfig(newUserData)
+    
+    if (nextIndex < updatedFilteredQs.length) {
       setTimeout(() => {
-        addAiMessage(getFilteredQuestions()[nextIndex])
+        addAiMessage(questionToMessage(updatedFilteredQs[nextIndex], newUserData))
       }, 300)
+    } else {
+      // Complete
+      const completeMessage: Message = {
+        id: "complete",
+        type: "ai",
+        content: COMPLETION_MESSAGE.text,
+        field: "complete",
+      }
+      addAiMessage(completeMessage)
+      setTimeout(() => {
+        onComplete({ ...newUserData, voiceMode })
+      }, 2000)
     }
   }
 
@@ -425,13 +357,13 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
       {/* Progress Steps */}
       <div className="px-6 py-4">
         <div className="flex items-center justify-between max-w-xs mx-auto">
-          {STEPS.slice(1).map((step, i) => (
+          {PROGRESS_STEPS.slice(1).map((step, i) => (
             <div key={step.id} className="flex items-center">
               <div className={`flex items-center gap-2 ${i + 1 <= currentStep ? 'text-[#FF0080]' : 'text-gray-300'}`}>
                 <div className={`w-3 h-3 rounded-full ${i + 1 <= currentStep ? 'bg-[#FF0080]' : 'bg-gray-200'}`} />
                 <span className="text-xs font-medium hidden sm:inline">{step.label}</span>
               </div>
-              {i < STEPS.length - 2 && (
+              {i < PROGRESS_STEPS.length - 2 && (
                 <div className={`w-8 sm:w-16 h-0.5 mx-2 ${i + 1 < currentStep ? 'bg-[#FF0080]' : 'bg-gray-200'}`} />
               )}
             </div>
