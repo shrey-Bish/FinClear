@@ -2,9 +2,12 @@
 
 > **State Farm Hackathon 2026** | Making insurance approachable, accessible, and actually fun
 
+## 🚀 **[Live Demo: https://fin-clear-rho.vercel.app](https://fin-clear-rho.vercel.app)**
+
 [![Built with Next.js](https://img.shields.io/badge/Next.js-15.5-black)](https://nextjs.org/)
 [![Powered by Gemini](https://img.shields.io/badge/Gemini-AI-blue)](https://ai.google.dev/)
 [![Supabase Auth](https://img.shields.io/badge/Supabase-Auth-green)](https://supabase.com/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-fin--clear--rho.vercel.app-brightgreen)](https://fin-clear-rho.vercel.app)
 
 ## 🎯 Problem Statement
 
@@ -85,8 +88,8 @@ Gen Z faces unique challenges with insurance:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/sowsmart.git
-cd sowsmart
+git clone https://github.com/shrey-Bish/FinClear.git
+cd FinClear
 
 # Install dependencies
 npm install
@@ -128,7 +131,10 @@ GOOGLE_CLIENT_SECRET=your_google_secret
 1. Create a Supabase project
 2. Run the SQL schema from `SUPABASE_SETUP.md`
 3. Enable Google provider in Authentication settings
-4. Add OAuth callback URL
+4. **Important for deployment**: Update Supabase Site URL to your production domain
+   - In Supabase Dashboard → Settings → Authentication → URL Configuration
+   - Change Site URL from `http://localhost:3000` to your Vercel URL
+5. Add OAuth callback URLs for both development and production
 
 See full setup instructions in [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md)
 
