@@ -81,8 +81,12 @@ export default function Home() {
     if (data.firstName) {
       login({ name: data.firstName, createdAt: new Date().toISOString() })
     }
-    
-    navigateTo("insights")
+
+    router.push("/recommendations")
+  }
+
+  const handleLogin = () => {
+    router.push("/login")
   }
 
   // Handle back navigation
@@ -142,7 +146,7 @@ export default function Home() {
             <LandingPage
               onStart={handleStart}
               onStartVoice={handleStartVoice}
-              onLogin={handleStart}
+              onLogin={handleLogin}
             />
           </motion.div>
         )}

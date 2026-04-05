@@ -16,7 +16,7 @@ import {
 
 import {
   COMPLETION_MESSAGE,
-  MAYA_INTRO,
+  GUIDE_INTRO,
   getFilteredQuestions,
   getQuestionContent,
 } from "@/config/questions"
@@ -294,7 +294,7 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
     currentQuestionIndexRef.current = -1
     setCurrentQuestionIndex(-1)
 
-    await speakLine(MAYA_INTRO.voice)
+    await speakLine(GUIDE_INTRO.voice)
 
     if (!isMountedRef.current || !isConnectedRef.current) return
 
@@ -347,7 +347,7 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                 👩
               </div>
               <div>
-                <p className="font-script text-xl text-[#1A1A1A]">Maya</p>
+                <p className="font-script text-xl text-[#1A1A1A]">Nova</p>
                 <p className="text-xs text-gray-500">{error ?? (isActive ? `Voice ${agentState}` : "Ready to start")}</p>
               </div>
             </div>
@@ -376,9 +376,9 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                     <Mic className="h-11 w-11 text-[#FF0080]" />
                   </motion.div>
 
-                  <h2 className="text-2xl font-medium text-[#1A1A1A]">Talk to Maya</h2>
+                  <h2 className="text-2xl font-medium text-[#1A1A1A]">Talk to Nova</h2>
                   <p className="mt-2 max-w-sm text-sm leading-6 text-gray-500">
-                    Ask your answers out loud. Maya will read each question with ElevenLabs voice quality and listen on your mic.
+                    Ask your answers out loud. Nova will read each question with ElevenLabs voice quality and listen on your mic.
                   </p>
 
                   <button
@@ -389,14 +389,14 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                     Start Conversation
                   </button>
 
-                  <p className="mt-4 text-xs text-gray-400">Uses your microphone for input and ElevenLabs for Maya&apos;s voice.</p>
+                  <p className="mt-4 text-xs text-gray-400">Uses your microphone for input and ElevenLabs for Nova&apos;s voice.</p>
                 </div>
               ) : (
                 <div className="flex h-full flex-col">
                   <div className="mb-5 flex items-center justify-between">
                     <div className="inline-flex items-center gap-2 rounded-full bg-[#F8F7F4] px-3 py-1 text-xs font-medium text-gray-600">
                       <span className={`h-2 w-2 rounded-full ${agentState === "listening" ? "bg-[#2E7D32]" : agentState === "speaking" ? "bg-[#FF0080]" : "bg-gray-400"}`} />
-                      {agentState === "speaking" && "Maya is speaking"}
+                      {agentState === "speaking" && "Nova is speaking"}
                       {agentState === "listening" && "Listening for your answer"}
                       {agentState === "processing" && "Thinking"}
                       {agentState === "idle" && "Idle"}
@@ -410,9 +410,9 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                       <div>
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2E7D32]">Live call</p>
                         <p className="mt-1 text-sm text-gray-600">
-                          {agentState === "speaking" && "Maya is setting up the next question."}
+                          {agentState === "speaking" && "Nova is setting up the next question."}
                           {agentState === "listening" && "Your answer is being captured."}
-                          {agentState === "processing" && "Maya is thinking through your response."}
+                          {agentState === "processing" && "Nova is thinking through your response."}
                           {agentState === "idle" && "Ready to begin the interview."}
                         </p>
                       </div>
@@ -466,7 +466,7 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                     {agentState === "speaking" && messages.length === 0 && (
                       <div className="flex items-center gap-3 rounded-3xl bg-[#F8F7F4] px-4 py-3 text-sm text-gray-500">
                         <Loader2 className="h-4 w-4 animate-spin text-[#FF0080]" />
-                        Maya is preparing the first question.
+                        Nova is preparing the first question.
                       </div>
                     )}
 
@@ -490,7 +490,7 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2E7D32]">Voice mode</p>
                       <p className="mt-2 text-sm leading-6 text-gray-600">
-                        Clear, natural audio for Maya&apos;s prompts. Mic capture stays on-device; only the spoken response is synthesized.
+                        Clear, natural audio for Nova&apos;s prompts. Mic capture stays on-device; only the spoken response is synthesized.
                       </p>
                     </div>
                     <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">ElevenLabs</div>

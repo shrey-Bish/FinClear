@@ -16,7 +16,7 @@ Gen Z sees State Farm as "my parents' insurance" - slow, phone-based, confusing.
 
 **The Flow:**
 1. Choose your mode → Text chat (fast) or Voice mode (accessible)
-2. 2-minute survey → Maya (AI) asks 7-9 personalized questions
+2. 2-minute survey -> Nova (AI) asks 7-9 personalized questions
 3. Instant recommendations → State Farm coverage tailored to your life
 4. Voice explanations → Tap any term to hear it explained
 5. Agent handoff → Connect with local State Farm agent

@@ -319,7 +319,7 @@ export function InsightsPage({ userData, onBack, onChat, onAgentConnect }: Insig
         <motion.div className="mt-12 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
           <button onClick={onChat} className="inline-flex items-center gap-2 text-[#FF0080] font-medium hover:underline">
             <MessageCircle className="w-5 h-5" />
-            Have questions? Chat with Maya
+            Have questions? Chat with Nova
           </button>
         </motion.div>
 

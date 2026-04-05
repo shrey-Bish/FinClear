@@ -114,7 +114,7 @@ export function getFilteredQuestions(userData) // Skips questions based on answe
 - Uses ElevenLabs for spoken prompts + SpeechRecognition for mic input
 - Same questions as text chat (from questions.ts)
 - Visual audio feedback (waveform animation)
-- Mute/unmute Maya's voice
+- Mute/unmute Nova's voice
 ```
 
 ### 5. `src/components/lemonade/InsightsPage.tsx` - Results
@@ -164,7 +164,7 @@ export const KNOWLEDGE_BASE = [
 ```
 1. LANDING PAGE
    ├── Hero: "Forget everything you know about insurance"
-   ├── Two CTAs: "Text Chat" | "Talk to Maya"
+  ├── Two CTAs: "Text Chat" | "Talk to Nova"
    ├── Product cards (Renters, Auto, Life, Health)
    └── Social proof (4.9 stars, reviews)
 
@@ -183,7 +183,7 @@ export const KNOWLEDGE_BASE = [
 
 2B. VOICE AGENT (VoiceAgent.tsx)
     ├── "Start Conversation" button
-    ├── Maya speaks questions aloud
+    ├── Nova speaks questions aloud
     ├── User responds via microphone
     ├── Same questions as text chat
     └── Complete → Insights
@@ -375,7 +375,7 @@ Edit `src/lib/rag/knowledge-base.ts`:
 2. **Solution** (15s): "SowSmart: 2-min signup with AI guidance"
 3. **Demo** (60s):
    - Show landing page
-   - Click "Talk to Maya" (voice) OR "Text Chat"
+  - Click "Talk to Nova" (voice) OR "Text Chat"
    - Answer 3-4 questions quickly
    - Show results page
    - Click voice explanation

@@ -47,7 +47,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
             onClick={onLogin}
             className="hidden md:block text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
-            My Account
+            Login
           </button>
           <button
             onClick={onStart}
@@ -131,7 +131,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
               whileTap={{ scale: 0.98 }}
             >
               <Mic className="w-5 h-5" />
-              Talk to Maya
+              Talk to Nova
             </motion.button>
           </motion.div>
           
@@ -284,7 +284,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
           <div className="grid md:grid-cols-3 gap-6">
             {[
               { name: "Alex K.", text: "Finally, insurance that doesn't make me want to cry. Signed up in literally 2 minutes.", handle: "@alexk_22" },
-              { name: "Maya S.", text: "I put off getting renters insurance for years. SowSmart made it so easy I'm mad I waited.", handle: "@mayaslife" },
+              { name: "Nora S.", text: "I put off getting renters insurance for years. SowSmart made it so easy I'm mad I waited.", handle: "@noraslife" },
               { name: "Jordan R.", text: "The chat-based signup was actually fun? Never thought I'd say that about insurance.", handle: "@jordanr" },
             ].map((review, i) => (
               <motion.div
@@ -353,7 +353,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
               whileTap={{ scale: 0.98 }}
             >
               <Mic className="w-5 h-5" />
-              Talk to Maya
+              Talk to Nova
             </motion.button>
           </motion.div>
         </div>
@@ -370,7 +370,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
         whileTap={{ scale: 0.95 }}
       >
         <Mic className="w-6 h-6" />
-        <span className="hidden sm:inline pr-1">Talk to Maya</span>
+        <span className="hidden sm:inline pr-1">Talk to Nova</span>
       </motion.button>
 
       {/* Footer */}

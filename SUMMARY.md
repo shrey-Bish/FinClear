@@ -138,7 +138,7 @@ Landing → ChatOnboarding → InsightsPage
 | Feature | Lemonade | Traditional SF | SowSmart |
 |---------|----------|----------------|----------|
 | Speed | ✅ 90 sec | ❌ 2 weeks | ✅ 2 min |
-| AI Guide | ✅ Jim | ❌ | ✅ Maya |
+| AI Guide | ✅ Jim | ❌ | ✅ Nova |
 | Voice Mode | ❌ | ❌ | ✅ Accessible |
 | Explanations | ❌ | ✅ (via phone) | ✅ (instant AI) |
 | Agent Access | ❌ | ✅ (slow) | ✅ (10 min) |
@@ -222,7 +222,7 @@ src/
    - ✅ 7-9 questions (dynamic)
    - ✅ Chat bubble UI
    - ✅ Progress indicator
-   - ✅ Maya avatar
+   - ✅ Nova avatar
    - ✅ Typing animation
    - ✅ Option cards with icons
 

@@ -30,9 +30,9 @@ export interface Question {
   }
 }
 
-export const MAYA_INTRO = {
-  text: "Hey! I'm Maya. 👋\n\nI'll help you find the perfect State Farm coverage in about 2 minutes.",
-  voice: "Hey! I'm Maya, your AI insurance guide. I'll help you find the perfect State Farm coverage in about 2 minutes. Let's get started!",
+export const GUIDE_INTRO = {
+  text: "Hey! I'm Nova. 👋\n\nI'll help you find the perfect State Farm coverage in about 2 minutes.",
+  voice: "Hey! I'm Nova, your AI insurance guide. I'll help you find the perfect State Farm coverage in about 2 minutes. Let's get started!",
 }
 
 export const QUESTIONS: Question[] = [
