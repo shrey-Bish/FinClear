@@ -1,0 +1,532 @@
+{
+  "insurance_policy_documents": [
+    {
+      "policy_name": "Standard Auto Insurance",
+      "policy_code": "AUTO-STD-2026",
+      "policy_type": "auto",
+      "simple_description": "Protects you financially if you're in a car accident, your vehicle is damaged, or someone sues you after a crash.",
+      "ideal_for": [
+        "Anyone who owns or regularly drives a car",
+        "New drivers added to a family policy",
+        "People leasing or financing a vehicle (required by lenders)"
+      ],
+      "what_is_covered": {
+        "liability_coverage": {
+          "description": "Pays for injuries or damage you cause to others in an accident",
+          "includes": [
+            "Medical bills for other drivers/passengers",
+            "Repair or replacement of other vehicles/property",
+            "Legal defense if you're sued after an accident"
+          ],
+          "typical_limits": "100/300/50 ($100k per person, $300k per accident, $50k property)"
+        },
+        "collision_coverage": {
+          "description": "Pays to repair or replace your car after a crash, regardless of fault",
+          "includes": [
+            "Accidents with other vehicles",
+            "Single-vehicle crashes (hitting a tree, pole, etc.)",
+            "Hit-and-run incidents (in most states)"
+          ],
+          "deductible_options": [250, 500, 1000]
+        },
+        "comprehensive_coverage": {
+          "description": "Covers damage to your car from non-collision events",
+          "includes": [
+            "Theft or vandalism",
+            "Weather damage (hail, flood, wind)",
+            "Animal collisions (deer, etc.)",
+            "Falling objects, fire, glass breakage"
+          ]
+        },
+        "additional_protections": {
+          "uninsured_motorist": "Covers you if hit by a driver with no insurance",
+          "medical_payments": "Helps pay medical bills for you/passengers regardless of fault",
+          "rental_reimbursement": "Pays for a rental car while yours is being repaired",
+          "roadside_assistance": "Towing, jump-starts, lockout service, tire changes"
+        }
+      },
+      "what_is_not_covered": [
+        "Regular maintenance (oil changes, tire rotations, brake pads)",
+        "Wear and tear (bald tires, worn belts, rust)",
+        "Using your car for ride-sharing without proper endorsement",
+        "Intentional damage or illegal activities",
+        "Driving under the influence (claims may be denied)",
+        "Personal items stolen from your vehicle (covered under homeowners/renters)",
+        "Mechanical breakdowns (requires separate mechanical breakdown policy)"
+      ],
+      "when_to_recommend": [
+        "User asks: 'I just bought a car, what insurance do I need?'",
+        "User asks: 'Am I covered if someone hits me and has no insurance?'",
+        "User asks: 'Does my insurance cover a rental car?'",
+        "User had an accident and needs to understand their coverage"
+      ],
+      "simple_recommendation_script": "If you drive a car, auto insurance is legally required in most states. This policy protects you from huge costs if you cause an accident, and covers repairs to your own vehicle too. We recommend liability + collision + comprehensive for full protection.",
+      "estimated_premium_range": "$80-$250/month (varies by age, driving record, location, vehicle)",
+      "key_exclusions_summary": "Does not cover maintenance, intentional acts, or using car for commercial ride-share without proper coverage."
+    },
+    {
+      "policy_name": "Homeowners Insurance",
+      "policy_code": "HOME-STD-2026",
+      "policy_type": "homeowners",
+      "simple_description": "Protects your home, belongings, and finances if your house is damaged, stolen from, or if someone gets hurt on your property.",
+      "ideal_for": [
+        "Homeowners (single-family, condo, townhouse)",
+        "People with mortgages (required by lenders)",
+        "Families wanting to protect personal belongings"
+      ],
+      "what_is_covered": {
+        "dwelling_coverage": {
+          "description": "Repairs or rebuilds your home's structure after covered damage",
+          "includes": [
+            "Fire, smoke, lightning damage",
+            "Wind, hail, hurricane damage",
+            "Vandalism or theft-related damage",
+            "Weight of ice/snow, falling objects"
+          ],
+          "basis": "Replacement cost (not market value)"
+        },
+        "personal_property": {
+          "description": "Replaces your belongings if damaged or stolen",
+          "includes": [
+            "Furniture, electronics, clothing, appliances",
+            "Items stolen from your car or while traveling",
+            "Coverage typically 50-70% of dwelling amount"
+          ],
+          "optional_upgrade": "Replacement cost endorsement (vs actual cash value)"
+        },
+        "liability_protection": {
+          "description": "Covers legal/medical costs if someone is injured on your property",
+          "includes": [
+            "Guest slips and falls",
+            "Dog bites (breed restrictions may apply)",
+            "Accidental damage you cause to others' property",
+            "Legal defense fees"
+          ],
+          "typical_limit": "$100,000 - $500,000"
+        },
+        "additional_living_expenses": {
+          "description": "Pays for temporary housing if your home is uninhabitable",
+          "includes": [
+            "Hotel stays, meals, storage costs",
+            "Typically 20-30% of dwelling coverage"
+          ]
+        },
+        "optional_endorsements": [
+          "Water backup (sewer/drain overflow)",
+          "Earthquake or flood (usually separate policies)",
+          "Identity theft protection",
+          "Equipment breakdown (HVAC, appliances)"
+        ]
+      },
+      "what_is_not_covered": [
+        "Flood damage (requires separate flood insurance)",
+        "Earthquake damage (requires endorsement or separate policy)",
+        "Normal wear and tear, maintenance issues (roof leaks from age)",
+        "Mold, pest infestations, or gradual water damage",
+        "Business equipment or home-based business liability",
+        "High-value items (jewelry, art) beyond sub-limits without scheduling",
+        "Intentional damage or neglect"
+      ],
+      "when_to_recommend": [
+        "User asks: 'I'm buying a house, what insurance do I need?'",
+        "User asks: 'If a tree falls on my house, am I covered?'",
+        "User asks: 'Does my insurance cover my laptop if it's stolen?'",
+        "User had a guest injured at their home and is worried about liability"
+      ],
+      "simple_recommendation_script": "Homeowners insurance is essential if you own a home. It protects your biggest investment—your house—and your stuff inside. It also shields you financially if someone gets hurt on your property. We recommend dwelling + personal property + liability + loss of use as a baseline.",
+      "estimated_premium_range": "$100-$300/month (varies by home value, location, construction, claims history)",
+      "key_exclusions_summary": "Does not cover floods, earthquakes, wear-and-tear, or business use without endorsements."
+    },
+    {
+      "policy_name": "Renters Insurance",
+      "policy_code": "RENT-STD-2026",
+      "policy_type": "renters",
+      "simple_description": "Affordable protection for your belongings and liability when you rent an apartment, condo, or house.",
+      "ideal_for": [
+        "Apartment or house renters",
+        "College students living off-campus",
+        "Anyone who wants to protect their personal belongings"
+      ],
+      "what_is_covered": {
+        "personal_property": {
+          "description": "Replaces your belongings if damaged or stolen",
+          "includes": [
+            "Furniture, electronics, clothing, bikes",
+            "Items stolen from your car or while traveling",
+            "Coverage for fire, theft, vandalism, water damage (from internal sources)"
+          ],
+          "typical_limits": "$15,000 - $50,000+"
+        },
+        "liability_protection": {
+          "description": "Covers costs if you accidentally injure someone or damage their property",
+          "includes": [
+            "Guest injured in your rental",
+            "Accidentally damaging landlord's property",
+            "Legal defense if sued"
+          ],
+          "typical_limit": "$100,000 - $300,000"
+        },
+        "additional_living_expenses": {
+          "description": "Helps pay for temporary housing if your rental becomes uninhabitable",
+          "includes": [
+            "Hotel costs, meals, storage",
+            "Typically 20-30% of personal property limit"
+          ]
+        },
+        "optional_add_ons": [
+          "Replacement cost for belongings (vs actual cash value)",
+          "Scheduled items for jewelry, electronics, musical instruments",
+          "Water backup coverage"
+        ]
+      },
+      "what_is_not_covered": [
+        "The physical building/structure (landlord's responsibility)",
+        "Flood or earthquake damage (requires separate policies)",
+        "Roommate's belongings (they need their own policy)",
+        "Business equipment or home-based business liability",
+        "High-value items beyond sub-limits without scheduling",
+        "Pests, mold, or maintenance issues"
+      ],
+      "when_to_recommend": [
+        "User asks: 'I rent an apartment, do I need insurance?'",
+        "User asks: 'If my apartment floods, are my things covered?'",
+        "User asks: 'Am I liable if a guest trips in my rental?'",
+        "User wants affordable protection for their belongings"
+      ],
+      "simple_recommendation_script": "Even though you don't own the building, your stuff inside is worth protecting. Renters insurance is cheap (often under $20/month) and covers your belongings, liability, and temporary housing if disaster strikes. Highly recommended for all renters.",
+      "estimated_premium_range": "$15-$40/month (very affordable)",
+      "key_exclusions_summary": "Does not cover the building itself, floods/earthquakes, or roommate's items."
+    },
+    {
+      "policy_name": "Term Life Insurance",
+      "policy_code": "LIFE-TERM-2026",
+      "policy_type": "life",
+      "simple_description": "Provides a tax-free payment to your loved ones if you pass away during the policy term. Simple, affordable protection for your family's financial future.",
+      "ideal_for": [
+        "Parents with young children",
+        "Spouses who depend on your income",
+        "People with mortgages or debts they want covered",
+        "Anyone seeking affordable, straightforward life insurance"
+      ],
+      "what_is_covered": {
+        "death_benefit": {
+          "description": "Tax-free lump sum paid to your beneficiaries if you die while policy is active",
+          "includes": [
+            "Flexible beneficiary designations (spouse, children, trust)",
+            "Funds can be used for any purpose: mortgage, education, daily living",
+            "Option for level or decreasing death benefit"
+          ],
+          "typical_amounts": "$100,000 - $2,000,000+"
+        },
+        "term_options": {
+          "description": "Choose coverage length that matches your needs",
+          "includes": [
+            "10, 15, 20, or 30-year terms",
+            "Level premiums (price stays same throughout term)",
+            "Option to convert to permanent insurance later (on some policies)"
+          ]
+        },
+        "living_benefits_riders": {
+          "description": "Access benefits early if facing serious illness",
+          "includes": [
+            "Accelerated death benefit for terminal illness",
+            "Waiver of premium if disabled",
+            "Critical or chronic illness riders (optional)"
+          ]
+        }
+      },
+      "what_is_not_covered": [
+        "Death by suicide within first 2 years (standard contestability period)",
+        "Death while committing a felony or illegal activity",
+        "Death from high-risk activities not disclosed during underwriting",
+        "No cash value accumulation (unlike whole life insurance)",
+        "Coverage ends at term expiration (no payout if you outlive the term)",
+        "Pre-existing conditions may affect eligibility or pricing"
+      ],
+      "when_to_recommend": [
+        "User asks: 'How can I make sure my family is okay financially if I die?'",
+        "User asks: 'What's the most affordable way to get life insurance?'",
+        "User has a new baby or just bought a home",
+        "User wants to cover a mortgage or college costs"
+      ],
+      "simple_recommendation_script": "Term life insurance is the most affordable way to protect your loved ones. If something happens to you during the term, your family gets a tax-free payment to cover expenses. We recommend coverage equal to 10x your income or enough to cover debts + 5-10 years of living expenses.",
+      "estimated_premium_range": "$20-$100/month for $500k policy (varies by age, health, term length)",
+      "key_exclusions_summary": "Does not build cash value, coverage ends after term, suicide clause in first 2 years."
+    },
+    {
+      "policy_name": "Supplemental Health Insurance",
+      "policy_code": "HEALTH-SUPP-2026",
+      "policy_type": "health_supplement",
+      "simple_description": "Helps cover out-of-pocket medical costs your main health insurance doesn't pay—like deductibles, copays, and unexpected expenses.",
+      "ideal_for": [
+        "People with high-deductible health plans",
+        "Families wanting extra protection for accidents or illnesses",
+        "Anyone worried about unexpected medical bills"
+      ],
+      "what_is_covered": {
+        "hospital_indemnity": {
+          "description": "Cash benefit paid directly to you for hospital stays",
+          "includes": [
+            "Fixed amount per day or per admission",
+            "Money can be used for any expense: bills, travel, childcare",
+            "Covers ICU, surgery, observation stays"
+          ]
+        },
+        "critical_illness_coverage": {
+          "description": "Lump-sum payment if diagnosed with a serious illness",
+          "includes": [
+            "Cancer, heart attack, stroke, kidney failure",
+            "Funds for treatment, travel, lost wages, home care",
+            "Typical benefit: $10,000 - $50,000"
+          ]
+        },
+        "accident_coverage": {
+          "description": "Helps pay costs from accidental injuries",
+          "includes": [
+            "ER visits, fractures, burns, concussions",
+            "Ambulance, imaging, follow-up care",
+            "Coverage for sports/recreational injuries"
+          ]
+        },
+        "wellness_and_prevention": {
+          "description": "Rewards for staying healthy",
+          "includes": [
+            "Annual physicals, screenings, vaccinations",
+            "Telehealth consultations",
+            "Discounts on prescriptions, fitness programs"
+          ]
+        }
+      },
+      "what_is_not_covered": [
+        "Does NOT replace major medical/ACA health insurance",
+        "Pre-existing conditions may have waiting periods",
+        "Routine care not tied to a covered event (unless wellness rider)",
+        "Cosmetic procedures, experimental treatments",
+        "Injuries from illegal activities or extreme sports (unless endorsed)",
+        "Mental health/substance abuse treatment (unless specified)"
+      ],
+      "when_to_recommend": [
+        "User asks: 'My health insurance has a $5,000 deductible—how do I cover that?'",
+        "User asks: 'What if I get cancer or have a heart attack?'",
+        "User has an accident and is worried about ER costs",
+        "User wants extra peace of mind beyond their main health plan"
+      ],
+      "simple_recommendation_script": "Supplemental health insurance fills the gaps in your main health plan. If you get sick or hurt, it pays you cash to help cover deductibles, travel, or lost wages. It's affordable and works alongside your existing insurance—not instead of it.",
+      "estimated_premium_range": "$30-$120/month (varies by coverage level, age, health)",
+      "key_exclusions_summary": "Not a replacement for major medical insurance; pre-existing conditions may have limitations."
+    },
+    {
+      "policy_name": "Personal Umbrella Insurance",
+      "policy_code": "UMB-STD-2026",
+      "policy_type": "umbrella",
+      "simple_description": "Extra liability protection that kicks in when your auto or homeowners insurance limits are exhausted. Shields your assets and future income from large lawsuits.",
+      "ideal_for": [
+        "Homeowners or car owners with significant assets",
+        "People with teenage drivers",
+        "Landlords, coaches, volunteers, or anyone with higher liability exposure",
+        "Anyone who wants to protect future wages from lawsuits"
+      ],
+      "what_is_covered": {
+        "excess_liability": {
+          "description": "Pays after your underlying auto/home policy limits are used up",
+          "includes": [
+            "Bodily injury lawsuits (e.g., serious car accident you caused)",
+            "Property damage claims (e.g., you damage expensive property)",
+            "Personal injury claims (libel, slander, false arrest)",
+            "Legal defense costs, even for groundless suits"
+          ],
+          "typical_limits": "$1 million - $5 million+"
+        },
+        "broad_coverage_scope": {
+          "description": "Covers liability situations other policies might miss",
+          "includes": [
+            "Accidents while traveling internationally",
+            "Liability as a landlord or volunteer",
+            "Defamation, invasion of privacy claims",
+            "Coverage for household members and dependents"
+          ]
+        },
+        "worldwide_protection": {
+          "description": "Coverage follows you anywhere in the world",
+          "includes": [
+            "Vacation accidents",
+            "Rental property incidents abroad",
+            "International travel liability"
+          ]
+        }
+      },
+      "what_is_not_covered": [
+        "Your own injuries or property damage (this is liability-only)",
+        "Business or professional liability (requires separate policy)",
+        "Intentional acts, criminal activity, or contractual liabilities",
+        "Damage from floods, earthquakes, or wear-and-tear",
+        "Liability from owned aircraft, large watercraft, or exotic vehicles",
+        "Workers' compensation claims for household employees"
+      ],
+      "when_to_recommend": [
+        "User asks: 'What if I cause a serious accident and get sued for more than my auto insurance covers?'",
+        "User asks: 'I have savings/investments—how do I protect them from lawsuits?'",
+        "User has teen drivers, a pool, dog, or rental property",
+        "User wants affordable extra protection beyond standard policies"
+      ],
+      "simple_recommendation_script": "Umbrella insurance is like a safety net on top of your auto and home policies. If you're ever sued for more than those policies pay, umbrella coverage steps in. For about $15-30/month per $1M in coverage, it's one of the best values in insurance for protecting your financial future.",
+      "estimated_premium_range": "$150-$400/year for $1M coverage (very cost-effective)",
+      "key_exclusions_summary": "Liability-only coverage; does not cover your own damages, business activities, or intentional acts."
+    },
+    {
+      "policy_name": "Short-Term Disability Insurance",
+      "policy_code": "DISAB-STD-2026",
+      "policy_type": "disability",
+      "simple_description": "Replaces a portion of your income if you're temporarily unable to work due to illness or injury. Helps you pay bills while you recover.",
+      "ideal_for": [
+        "Employees without employer-sponsored disability coverage",
+        "Self-employed individuals or freelancers",
+        "Primary income earners with limited emergency savings",
+        "Anyone in a physically demanding job"
+      ],
+      "what_is_covered": {
+        "income_replacement": {
+          "description": "Monthly benefit paid while you're disabled and unable to work",
+          "includes": [
+            "Typically 50-70% of your pre-disability income",
+            "Tax-free benefits if you pay premiums with after-tax dollars",
+            "Benefits paid after elimination period (e.g., 14-90 days)"
+          ],
+          "typical_benefit_period": "3 months, 6 months, 1 year, or 2 years"
+        },
+        "covered_conditions": {
+          "description": "Illnesses and injuries that qualify for benefits",
+          "includes": [
+            "Accidents: fractures, surgeries, severe injuries",
+            "Illnesses: cancer, heart conditions, mental health (if included)",
+            "Pregnancy/childbirth complications (if not excluded)",
+            "Recovery from major medical procedures"
+          ]
+        },
+        "own_occupation_option": {
+          "description": "Higher-tier coverage that pays if you can't do your specific job",
+          "includes": [
+            "Benefits even if you can work in a different role",
+            "Ideal for specialized professions (doctors, trades, etc.)",
+            "Higher premium but stronger protection"
+          ]
+        },
+        "rehabilitation_support": {
+          "description": "Help getting back to work",
+          "includes": [
+            "Vocational rehab services",
+            "Partial disability benefits for phased return",
+            "Cost-of-living adjustments on long claims"
+          ]
+        }
+      },
+      "what_is_not_covered": [
+        "Pre-existing conditions during initial exclusion period (often 12 months)",
+        "Disability from illegal activities, war, or self-inflicted injuries",
+        "Normal pregnancy without complications (unless endorsed)",
+        "Cosmetic surgery recovery (unless medically necessary)",
+        "Unemployment or lack of work (not disability)",
+        "Mental/nervous disorders may have limited benefit periods (policy-dependent)"
+      ],
+      "when_to_recommend": [
+        "User asks: 'What if I get sick and can't work for a few months?'",
+        "User asks: 'My employer doesn't offer disability insurance—should I get my own?'",
+        "User is self-employed and worried about income loss",
+        "User has limited savings and lives paycheck to paycheck"
+      ],
+      "simple_recommendation_script": "Disability insurance protects your most valuable asset: your ability to earn income. If illness or injury keeps you from working, this policy replaces part of your paycheck so you can focus on recovery. We recommend coverage that replaces 60% of income with a 90-day elimination period for best value.",
+      "estimated_premium_range": "$30-$150/month (varies by occupation, health, benefit level)",
+      "key_exclusions_summary": "Pre-existing conditions excluded initially; mental health benefits may be limited; not for unemployment."
+    },
+    {
+      "policy_name": "Pet Insurance",
+      "policy_code": "PET-STD-2026",
+      "policy_type": "pet",
+      "simple_description": "Helps cover veterinary costs for your dog or cat when they get sick or injured. Keep your pet healthy without the financial stress.",
+      "ideal_for": [
+        "Dog or cat owners (most policies)",
+        "Owners of breeds prone to health issues",
+        "People who want to afford advanced treatments (surgery, cancer care)",
+        "Anyone who considers their pet family"
+      ],
+      "what_is_covered": {
+        "accident_coverage": {
+          "description": "Veterinary costs from unexpected injuries",
+          "includes": [
+            "Broken bones, cuts, poisoning, foreign object ingestion",
+            "Emergency visits, surgery, hospitalization, medications",
+            "Diagnostic tests: X-rays, bloodwork, MRIs"
+          ]
+        },
+        "illness_coverage": {
+          "description": "Treatment costs for diseases and conditions",
+          "includes": [
+            "Cancer, diabetes, arthritis, infections",
+            "Chronic condition management (if enrolled before diagnosis)",
+            "Hereditary/congenital conditions (breed-specific)"
+          ]
+        },
+        "wellness_add_on": {
+          "description": "Optional routine care coverage",
+          "includes": [
+            "Annual exams, vaccinations, flea/tick prevention",
+            "Dental cleanings, spay/neuter",
+            "Bloodwork, microchipping"
+          ]
+        },
+        "flexible_reimbursement": {
+          "description": "Choose how much the policy pays back",
+          "includes": [
+            "Reimbursement levels: 70%, 80%, or 90% of vet bills",
+            "Annual limits: $5k, $10k, unlimited options",
+            "Deductible choices: $100-$1,000"
+          ]
+        }
+      },
+      "what_is_not_covered": [
+        "Pre-existing conditions (any illness/injury before coverage or during waiting period)",
+        "Routine/preventive care (unless wellness rider purchased)",
+        "Cosmetic procedures (tail docking, declawing)",
+        "Breeding, pregnancy, or birthing costs",
+        "Behavioral training or obedience classes",
+        "Food, grooming, boarding, or non-medical expenses",
+        "Injuries from racing, fighting, or commercial use"
+      ],
+      "when_to_recommend": [
+        "User asks: 'How can I afford vet bills if my pet gets seriously sick?'",
+        "User asks: 'Is pet insurance worth it for a young, healthy dog/cat?'",
+        "User has a breed prone to hip dysplasia, heart issues, etc.",
+        "User wants to ensure they can say 'yes' to life-saving treatment"
+      ],
+      "simple_recommendation_script": "Pet insurance helps you give your furry friend the best care without worrying about cost. Enroll while your pet is young and healthy to avoid pre-existing condition exclusions. We recommend accident + illness coverage with 80% reimbursement and a $500 deductible for balanced value.",
+      "estimated_premium_range": "$25-$70/month for dogs; $15-$45/month for cats (varies by breed, age, location)",
+      "key_exclusions_summary": "Pre-existing conditions not covered; routine care requires wellness add-on; waiting periods apply."
+    }
+  ],
+  "rag_optimization_metadata": {
+    "chunking_strategy": "Each policy document is self-contained and can be chunked by: 1) full policy, 2) 'what_is_covered' section, 3) 'what_is_not_covered' section, or 4) 'when_to_recommend' for query matching",
+    "embedding_recommendations": [
+      "Index 'simple_description' and 'simple_recommendation_script' for natural language queries",
+      "Use 'ideal_for' and 'when_to_recommend' arrays for intent classification",
+      "Vectorize 'what_is_covered' details for coverage-specific questions",
+      "Tag documents with 'policy_type' for hybrid filtering + semantic search"
+    ],
+    "sample_user_queries_and_matching_policies": {
+      "I just bought a car, what insurance do I need?": "Standard Auto Insurance",
+      "If a tree falls on my house, am I covered?": "Homeowners Insurance",
+      "I rent an apartment, do I need insurance?": "Renters Insurance",
+      "How can I make sure my family is okay financially if I die?": "Term Life Insurance",
+      "My health insurance has a $5,000 deductible—how do I cover that?": "Supplemental Health Insurance",
+      "What if I cause a serious accident and get sued for more than my auto insurance covers?": "Personal Umbrella Insurance",
+      "What if I get sick and can't work for a few months?": "Short-Term Disability Insurance",
+      "How can I afford vet bills if my pet gets seriously sick?": "Pet Insurance"
+    },
+    "response_generation_tips": [
+      "Start with the simple_description to answer in plain language",
+      "Reference specific 'what_is_covered' items that match the user's scenario",
+      "Proactively mention relevant 'what_is_not_covered' exclusions to set expectations",
+      "Use 'simple_recommendation_script' as a template for personalized advice",
+      "Include estimated_premium_range when user asks about cost"
+    ]
+  }
+}

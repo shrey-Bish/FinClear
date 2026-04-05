@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import { fetchUserProfile, fetchUserChats, isDatabaseConfigured } from "@/lib/database"
 import { buildInsights, withDerivedMetrics } from "@/lib/insights"
+import { buildPolicyRagInsights, retrieveRelevantPoliciesForProfile } from "@/lib/rag/policies-rag"
 import { getStore } from "../_store"
 import type { EnrollmentFormData, SowSmartInsights, PlanPreferenceOption } from "@/lib/types"
 
@@ -179,7 +180,11 @@ export async function POST(request: Request) {
           store.profiles.set(userId, formData)
 
           // Generate insights from database data
-          const insights = buildInsights(formData)
+          const ruleInsights = buildInsights(formData)
+          const policyMatches = retrieveRelevantPoliciesForProfile(formData, 4)
+          const insights = policyMatches.length
+            ? buildPolicyRagInsights(formData, ruleInsights, policyMatches)
+            : ruleInsights
           store.insights.set(userId, insights)
 
           dataSource = 'database'
@@ -197,7 +202,11 @@ export async function POST(request: Request) {
     // Try to use in-memory profile
     const memoryProfile = store.profiles.get(userId)
     if (memoryProfile) {
-      const insights = buildInsights(memoryProfile)
+      const ruleInsights = buildInsights(memoryProfile)
+      const policyMatches = retrieveRelevantPoliciesForProfile(memoryProfile, 4)
+      const insights = policyMatches.length
+        ? buildPolicyRagInsights(memoryProfile, ruleInsights, policyMatches)
+        : ruleInsights
       store.insights.set(userId, insights)
       
       dataSource = 'memory'

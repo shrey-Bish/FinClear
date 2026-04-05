@@ -3,13 +3,18 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 
 import { getStore } from "../_store"
 import { buildInsights, buildPriorityBenefits, withDerivedMetrics } from "@/lib/insights"
+import {
+  buildPolicyRagInsights,
+  formatPolicyContext,
+  retrieveRelevantPoliciesForProfile,
+} from "@/lib/rag/policies-rag"
 import type { EnrollmentFormData, SowSmartInsights, PriorityBenefit } from "@/lib/types"
 
 export const runtime = "nodejs"
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash"
 
-function buildGeminiPrompt(profile: EnrollmentFormData): string {
+function buildGeminiPrompt(profile: EnrollmentFormData, policyContext: string): string {
   return `You are an expert financial wellness advisor for State Farm Insurance. Based on the following user profile, generate personalized insurance and financial recommendations.
 
 USER PROFILE:
@@ -35,6 +40,8 @@ USER PROFILE:
 - Travels Out of State: ${profile.travelsOutOfState ?? "Not specified"}
 - Credit Score Estimate: ${profile.creditScore}
 - Anticipates Life Changes: ${profile.anticipatesLifeChanges ?? "Not specified"}
+
+${policyContext}
 
 Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
 {
@@ -155,14 +162,30 @@ export async function POST(request: Request) {
 
     // Always build local insights as fallback
     const localInsights = buildInsights(preparedProfile)
+    const policyMatches = retrieveRelevantPoliciesForProfile(preparedProfile, 4)
 
-    // Try Gemini AI for personalized recommendations
+    // Fall back to local rules only when no policy documents match
+    if (policyMatches.length === 0) {
+      store.insights.set(userId, localInsights)
+      return NextResponse.json({ insights: localInsights, source: "local-no-policy-match" })
+    }
+
+    const ragFallbackInsights = buildPolicyRagInsights(
+      preparedProfile,
+      localInsights,
+      policyMatches,
+    )
+
+    // Try Gemini AI with matched policy context for personalized recommendations
     const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY
     if (apiKey) {
       try {
         const genAI = new GoogleGenerativeAI(apiKey)
         const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
-        const prompt = buildGeminiPrompt(preparedProfile)
+        const prompt = buildGeminiPrompt(
+          preparedProfile,
+          formatPolicyContext(policyMatches),
+        )
 
         const result = await model.generateContent(prompt)
         const text = result.response.text()
@@ -171,7 +194,7 @@ export async function POST(request: Request) {
           const aiInsights = parseGeminiInsights(
             text,
             preparedProfile,
-            localInsights
+            ragFallbackInsights
           )
           store.insights.set(userId, aiInsights)
           return NextResponse.json({
@@ -180,13 +203,13 @@ export async function POST(request: Request) {
           })
         }
       } catch (geminiError) {
-        console.error("Gemini generatePlans error, using fallback:", geminiError)
+        console.error("Gemini generatePlans error, using policy-RAG fallback:", geminiError)
       }
     }
 
-    // Fallback to local insights
-    store.insights.set(userId, localInsights)
-    return NextResponse.json({ insights: localInsights, source: "local" })
+    // Fallback to policy-RAG (non-AI) insights when Gemini is unavailable
+    store.insights.set(userId, ragFallbackInsights)
+    return NextResponse.json({ insights: ragFallbackInsights, source: "policy-rag" })
   } catch (error) {
     console.error("Failed to generate plans", error)
     return NextResponse.json(
