@@ -1,33 +1,29 @@
 "use client"
 
-import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Menu, Mic, MessageSquare } from "lucide-react"
-import { VoiceAgent } from "./VoiceAgent"
+import { useRouter } from "next/navigation"
 
 interface LandingPageProps {
   onStart: () => void
   onStartVoice?: () => void
   onLogin?: () => void
-  onVoiceComplete?: (data: Record<string, any>) => void
 }
 
-export function LandingPage({ onStart, onStartVoice, onLogin, onVoiceComplete }: LandingPageProps) {
-  const [showVoiceAgent, setShowVoiceAgent] = useState(false)
+export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps) {
+  const router = useRouter()
 
-  const handleVoiceComplete = (data: Record<string, any>) => {
-    setShowVoiceAgent(false)
-    onVoiceComplete?.(data)
+  const handleStartVoice = () => {
+    if (onStartVoice) {
+      onStartVoice()
+      return
+    }
+
+    router.push("/voice")
   }
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Voice Agent Modal */}
-      <VoiceAgent 
-        isOpen={showVoiceAgent} 
-        onClose={() => setShowVoiceAgent(false)}
-        onComplete={handleVoiceComplete}
-      />
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 md:px-12">
         <nav className="hidden md:flex items-center gap-8 text-sm text-gray-600">
@@ -129,7 +125,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin, onVoiceComplete }:
             </motion.button>
             
             <motion.button
-              onClick={() => setShowVoiceAgent(true)}
+              onClick={handleStartVoice}
               className="bg-gray-900 text-white text-lg font-medium px-8 py-4 rounded-lg hover:bg-gray-800 transition-all shadow-lg flex items-center gap-3"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -351,7 +347,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin, onVoiceComplete }:
             </motion.button>
             <span className="text-gray-400">or</span>
             <motion.button
-              onClick={() => setShowVoiceAgent(true)}
+              onClick={handleStartVoice}
               className="bg-gray-900 text-white text-lg font-medium px-8 py-4 rounded-lg hover:bg-gray-800 transition-all flex items-center gap-2"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -365,7 +361,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin, onVoiceComplete }:
 
       {/* Floating Voice Button */}
       <motion.button
-        onClick={() => setShowVoiceAgent(true)}
+        onClick={handleStartVoice}
         className="fixed bottom-6 right-6 bg-gray-900 hover:bg-gray-800 text-white p-4 rounded-full shadow-xl flex items-center gap-2 z-40"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}

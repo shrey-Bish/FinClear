@@ -65,7 +65,7 @@
 **Voice Explanations:**
 - Tap 🎙️ icon to "hear" explanation
 - Shows popup with animated speaker icon
-- Future: ElevenLabs TTS integration
+- ElevenLabs TTS powers voice playback for onboarding, voice modal, and voice explanations
 
 **Interactive Features:**
 - Click cards to select coverage
@@ -260,7 +260,7 @@ src/
 ### 📝 Next Steps (If Time Permits)
 
 **High Priority:**
-- [ ] ElevenLabs integration (real TTS)
+- [x] ElevenLabs integration (real TTS)
 - [ ] More State Farm product details
 - [ ] Mobile responsive fixes
 

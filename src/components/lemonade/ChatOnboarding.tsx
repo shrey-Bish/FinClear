@@ -12,6 +12,7 @@ import {
   getFilteredQuestions as getFilteredQuestionsFromConfig,
   type Question 
 } from "@/config/questions"
+import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "@/lib/voice"
 
 interface Message {
   id: string
@@ -72,6 +73,12 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  useEffect(() => {
+    return () => {
+      stopSowSmartVoice()
+    }
+  }, [])
+
   // Start with mode selection
   useEffect(() => {
     if (!modeSelected) return
@@ -93,12 +100,9 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
       setIsTyping(false)
       setMessages(prev => [...prev, message])
       
-      // In voice mode, use Web Speech API to read the message
-      if (voiceMode && "speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(message.content.replace(/[👋🎉🎯😄]/g, ''))
-        utterance.rate = 1.0
-        utterance.pitch = 1.1
-        window.speechSynthesis.speak(utterance)
+      // In voice mode, play the prompt through the shared ElevenLabs voice helper.
+      if (voiceMode) {
+        void speakSowSmartText(prepareVoiceText(message.content))
       }
     }, delay)
   }

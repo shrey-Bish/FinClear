@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { ChevronLeft, Volume2, MessageCircle, ArrowRight, Check, Phone, Shield, Car, Home, Heart, HelpCircle } from "lucide-react"
+import { prepareVoiceText, speakSowSmartText, stopSowSmartVoice } from "@/lib/voice"
 
 interface InsightsPageProps {
   userData: Record<string, any>
@@ -135,14 +136,27 @@ export function InsightsPage({ userData, onBack, onChat, onAgentConnect }: Insig
     setSelectedPlans(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type])
   }
 
-  const handleVoiceExplain = (term: string) => {
-    setShowVoiceExplainer(term)
-    setTimeout(() => setShowVoiceExplainer(null), 3500)
-  }
-
   const termExplanations: Record<string, string> = {
     "emergency runway": "This is how long your savings could last if you suddenly lost your income. Financial experts recommend having 3-6 months saved up."
   }
+
+  const handleVoiceExplain = async (term: string) => {
+    const explanation = termExplanations[term] || "Playing explanation..."
+    setShowVoiceExplainer(term)
+
+    try {
+      const playback = await speakSowSmartText(prepareVoiceText(explanation))
+      await playback.finished
+    } finally {
+      setTimeout(() => setShowVoiceExplainer(null), 350)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      stopSowSmartVoice()
+    }
+  }, [])
 
   const calculateTotal = () => {
     const prices: Record<string, number> = { renters: 15, auto: 89, life: 18 }

@@ -39,6 +39,7 @@ Gen Z sees State Farm as "my parents' insurance" - slow, phone-based, confusing.
 npm install
 cp .env.example .env
 # Add your GEMINI_API_KEY
+# Optional: add ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID for voice playback
 npm run dev
 ```
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
+import { useRouter } from "next/navigation"
 
 import { LandingPage, ChatOnboarding, InsightsPage } from "@/components/lemonade"
 import { ChatModal } from "@/components/chat-modal"
@@ -22,6 +23,7 @@ const ONBOARDING_COMPLETE_KEY = "sowsmart_onboarding_complete"
 
 export default function Home() {
   const { login } = useUser()
+  const router = useRouter()
   const [currentScreen, setCurrentScreen] = useState<ScreenKey>("landing")
   const [userData, setUserData] = useState<Record<string, any>>({})
   const [showChat, setShowChat] = useState(false)
@@ -62,6 +64,10 @@ export default function Home() {
   // Handle start - go to onboarding
   const handleStart = () => {
     navigateTo("onboarding")
+  }
+
+  const handleStartVoice = () => {
+    router.push("/voice")
   }
 
   // Handle onboarding complete
@@ -133,8 +139,8 @@ export default function Home() {
           >
             <LandingPage
               onStart={handleStart}
+              onStartVoice={handleStartVoice}
               onLogin={handleStart}
-              onVoiceComplete={handleOnboardingComplete}
             />
           </motion.div>
         )}
