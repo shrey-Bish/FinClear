@@ -31,7 +31,7 @@ export function VoiceInterview({ initialData, onComplete }: VoiceInterviewProps)
   const [status, setStatus] = useState<InterviewState>("idle");
   const [transcript, setTranscript] = useState("");
   const [aiMessage, setAiMessage] = useState(
-    "Hello! I'm FinMate. I'll ask a few quick questions to personalize your profile. Just answer out loud. Ready when you are."
+    "Hello! I'm SowSmart. I'll ask a few quick questions to personalize your profile. Just answer out loud. Ready when you are."
   );
   const [currentData, setCurrentData] = useState<Partial<EnrollmentFormData>>(initialData);
   const [error, setError] = useState<string | null>(null);

@@ -1,49 +1,11 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import type { EnrollmentFormData } from "@/lib/types";
+import fs from "fs";
+import path from "path";
 
 export const runtime = "nodejs";
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-
-const SYSTEM_PROMPT = `You are a friendly, conversational AI financial wellness assistant for State Farm named FinMate.
-Your goal is to conduct a thorough but entirely conversational voice interview with the user.
-You need to extract a comprehensive set of information to build their personalized profile, mirroring our 30-question manual survey.
-You must be empathetic, conversational, and ask ONLY 1 or 2 small questions at a time. Do not overwhelm the user. If they give brief answers, that is fine.
-
-Extract the following fields gradually into your "extractedData" JSON:
-- age (number)
-- maritalStatus ('single', 'married', 'partnered', 'divorced', 'widowed', 'other')
-- dependents (number of children/dependents)
-- educationLevel ('high-school', 'associate', 'bachelor', 'master', 'doctorate', 'other')
-- homeOwnership ('rent', 'own', 'with-family', 'other')
-- incomeRange ('under-50k', '50-100k', '100-200k', '200k-plus')
-- healthCoverage ('employer', 'partner', 'marketplace', 'none')
-- savingsRate (number 0-100 representing percentage of income saved)
-- wantsSavingsSupport (boolean)
-- riskComfort (1 to 5: 1=conservative, 5=risk-tolerant)
-- investsInMarkets (boolean)
-- activityLevel ('relaxed', 'balanced', 'active')
-- tobaccoUse (boolean)
-- hasContinuousCoverage (boolean)
-- planPreference ('lower-premiums', 'lower-deductible', 'balanced')
-- expectedBenefitUsage ('rarely', 'occasionally', 'frequently')
-- contributesToRetirement (boolean)
-- guidancePreference ('summary', 'step', 'chat')
-
-You will receive the "currentData" showing what you have already collected. 
-Review what is missing from the list above, and ask a natural question to fill in the gaps. 
-Do NOT set "isComplete" to true until you have collected at least 15 of these core fields to ensure a detailed financial profile. When enough data is gathered, say something concluding and set isComplete to true.
-
-IMPORTANT: You MUST return ONLY a valid JSON object matching this exact schema (no markdown formatting, no code blocks):
-{
-  "replyText": "your conversational response to speak to the user",
-  "extractedData": {
-    "age": 30,
-    "incomeRange": "50-100k"
-  },
-  "isComplete": false
-}`;
 
 export async function POST(req: Request) {
   try {
@@ -54,16 +16,51 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing Gemini API key" }, { status: 500 });
     }
 
+    // Read the static MD script file
+    const scriptPath = path.join(process.cwd(), "src/content/survey-questions.md");
+    let scriptContent = "";
+    try {
+      scriptContent = fs.readFileSync(scriptPath, "utf-8");
+    } catch (e) {
+      console.warn("Could not load script file precisely at", scriptPath, e);
+      scriptContent = "Fallback Script Missing";
+    }
+
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+
+    const SYSTEM_PROMPT = `You are a financial wellness assistant routing a user through an exact static interview script.
+Here is the script of questions organized by Category:
+---
+${scriptContent}
+---
+
+Your TASK is to act as a strict state machine:
+1. Examine the \`currentData\` collected so far.
+2. Examine the user's latest \`transcript\` answer. Extract any answers corresponding to the script's IDs into your \`extractedData\`.
+3. Determine what the next question should be:
+   - ALWAYS start in "General". Read top to bottom.
+   - If \`insuranceType\` has been answered (e.g. they chose "Health Insurance"), you MUST immediately transition to the subset of questions under that specific Category Heading.
+   - You MUST pick the EXACT "text" of the next unanswered question in the script, and return it exactly word-for-word as your \`replyText\`. DO NOT make up your own conversational text.
+4. If there are no more questions left in their specific category path, set \`isComplete: true\` and output a concluding \`replyText\` thanking them.
+
+IMPORTANT: You MUST return ONLY a valid JSON object matching this exact schema (no markdown formatting):
+{
+  "replyText": "The EXACT text string of the next question from the script",
+  "extractedData": {
+    "age": 30, // example extraction
+    "insuranceType": "Health Insurance" // example extraction
+  },
+  "isComplete": false
+}`;
 
     const promptText = `
 ${SYSTEM_PROMPT}
 
 User's Name: ${userName || "Friend"}
-Currently extracted data: ${JSON.stringify(currentData || {})}
+Currently extracted data (STATE): ${JSON.stringify(currentData || {})}
 
-User's latest response transcript: "${transcript}"
+User's latest response: "${transcript}"
 
 Return JSON:
 `;
