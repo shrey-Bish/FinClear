@@ -19,7 +19,7 @@ type ScreenKey = "landing" | "onboarding" | "insights"
 
 // Storage keys
 const USER_DATA_KEY = "sowsmart_user_data"
-const ONBOARDING_COMPLETE_KEY = "sowsmart_onboarding_complete"
+const LEGACY_ONBOARDING_COMPLETE_KEY = "sowsmart_onboarding_complete"
 
 export default function Home() {
   const { login } = useUser()
@@ -33,16 +33,14 @@ export default function Home() {
   useEffect(() => {
     if (!isHydrated) return
 
+    // One-time cleanup: old flag is no longer used for startup routing.
+    removeStorage(LEGACY_ONBOARDING_COMPLETE_KEY)
+
     const savedUserData = readStorage<Record<string, any>>(USER_DATA_KEY, {})
-    const onboardingComplete = readStorage<boolean>(ONBOARDING_COMPLETE_KEY, false)
 
     queueMicrotask(() => {
       if (savedUserData && Object.keys(savedUserData).length > 0) {
         setUserData(savedUserData)
-      }
-
-      if (onboardingComplete) {
-        setCurrentScreen("insights")
       }
     })
   }, [isHydrated])
@@ -75,7 +73,6 @@ export default function Home() {
   // Handle onboarding complete
   const handleOnboardingComplete = (data: Record<string, any>) => {
     setUserData(data)
-    writeStorage(ONBOARDING_COMPLETE_KEY, true)
     
     // Login user
     if (data.firstName) {
@@ -112,7 +109,6 @@ export default function Home() {
   const handleClearData = () => {
     setUserData({})
     removeStorage(USER_DATA_KEY)
-    removeStorage(ONBOARDING_COMPLETE_KEY)
     navigateTo("landing")
   }
 
