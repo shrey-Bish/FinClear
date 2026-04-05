@@ -24,7 +24,7 @@ export function LearningHub({ persona }: LearningHubProps) {
   const handleOpenChat = () => {
     const educationPrompt = "I'd like to learn more about my benefits and financial planning options. Can you help me understand what resources are available to me?"
     window.dispatchEvent(
-      new CustomEvent("FinMate:chat:open", {
+      new CustomEvent("SowSmart:chat:open", {
         detail: { 
           prompt: educationPrompt,
           context: { screen: "learning-hub", persona }
@@ -152,7 +152,7 @@ export function LearningHub({ persona }: LearningHubProps) {
 
   const recommendedArticles = categories.flatMap((cat) => cat.articles.filter((article) => article.recommended))
 
-  // Lincoln Financial Resources
+  // State Farm Resources
   const lincolnResources = [
     {
       title: "Life Insurance Guide",
@@ -208,7 +208,7 @@ export function LearningHub({ persona }: LearningHubProps) {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <MessageCircle className="w-5 h-5 text-[#A41E34]" />
-                <h2 className="text-xl font-bold">Ask FinMate</h2>
+                <h2 className="text-xl font-bold">Ask SowSmart</h2>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
                 Get personalized guidance about your benefits, financial planning, and more. Our AI assistant is ready to help answer your questions.
@@ -224,11 +224,11 @@ export function LearningHub({ persona }: LearningHubProps) {
           </div>
         </Card>
 
-        {/* Lincoln Financial Resources */}
+        {/* State Farm Resources */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Shield className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-bold">Lincoln Financial Resources</h2>
+            <h2 className="text-xl font-bold">State Farm Resources</h2>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {lincolnResources.map((resource, index) => (

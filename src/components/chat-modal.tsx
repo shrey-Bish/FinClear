@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { askFinMate } from "@/lib/chat"
+import { askSowSmart } from "@/lib/chat"
 import { Loader2, X } from "lucide-react"
 
 type Role = "user" | "assistant" | "error" | "system"
@@ -18,7 +18,7 @@ export function ChatModal({
   const sid = useMemo(() => {
     if (sessionId) return sessionId
     if (typeof window !== "undefined") {
-      const key = "__FinMate_session"; const ex = (window as any)[key]
+      const key = "__SowSmart_session"; const ex = (window as any)[key]
       if (ex) return ex as string; const v = crypto.randomUUID(); (window as any)[key] = v; return v
     } return "server-session"
   }, [sessionId])
@@ -33,8 +33,8 @@ export function ChatModal({
         void send(text, d.context)
       }
     }
-    window.addEventListener("FinMate:chat:open", onOpen as any)
-    return () => window.removeEventListener("FinMate:chat:open", onOpen as any)
+    window.addEventListener("SowSmart:chat:open", onOpen as any)
+    return () => window.removeEventListener("SowSmart:chat:open", onOpen as any)
   }, [])
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export function ChatModal({
     if (!textParam) { setMessages(m => [...m, { id: crypto.randomUUID(), role:"user", ts: Date.now(), content: text }]); setInput("") }
     setSending(true)
     try {
-      const payload = await askFinMate({ prompt: text, userId, sessionId: sid, context: { ...(baseContext||{}), ...(extraContext||{}) } })
+      const payload = await askSowSmart({ prompt: text, userId, sessionId: sid, context: { ...(baseContext||{}), ...(extraContext||{}) } })
       if ("error" in payload) setMessages(m => [...m, { id: crypto.randomUUID(), role:"error", ts: Date.now(), content: `Error: ${payload.error}` }])
       else setMessages(m => [...m, { id: crypto.randomUUID(), role:"assistant", ts: Date.now(), content: payload.message || "(no content)", provider: payload.provider }])
     } catch (e:any) {
@@ -73,28 +73,28 @@ export function ChatModal({
       <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>
-            <div className="text-[12px] font-semibold tracking-[0.18em] text-[#C41230]">FinMate CHAT</div>
-            <div className="text-sm text-[#C41230]/70">Ask anything about your benefits</div>
+            <div className="text-[12px] font-semibold tracking-[0.18em] text-[#1B5E20]">SowSmart CHAT</div>
+            <div className="text-sm text-[#1B5E20]/70">Ask anything about your benefits</div>
           </div>
-          <button onClick={close} aria-label="Close" className="rounded-full p-1 text-[#C41230] hover:bg-[#F0E6E7]"><X className="h-4 w-4" /></button>
+          <button onClick={close} aria-label="Close" className="rounded-full p-1 text-[#1B5E20] hover:bg-[#F0E6E7]"><X className="h-4 w-4" /></button>
         </div>
 
         <div className="flex flex-wrap gap-2 border-b px-5 py-3 text-xs">
-          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#C41230]" onClick={() => setInput("Summarize my priorities")}>Summarize my priorities</button>
-          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#C41230]" onClick={() => setInput("What should I tackle next?")}>What should I tackle next?</button>
-          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#C41230]" onClick={() => setInput("Email my plan to HR")}>Email my plan to HR</button>
+          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#1B5E20]" onClick={() => setInput("Summarize my priorities")}>Summarize my priorities</button>
+          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#1B5E20]" onClick={() => setInput("What should I tackle next?")}>What should I tackle next?</button>
+          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#1B5E20]" onClick={() => setInput("Email my plan to HR")}>Email my plan to HR</button>
         </div>
 
         <div ref={scrollRef} className="max-h-[52vh] space-y-3 overflow-y-auto px-5 py-4">
           {messages.map(m => (
             <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
-                m.role === "user" ? "rounded-br-sm bg-[#E31837] text-white" :
+                m.role === "user" ? "rounded-br-sm bg-[#2E7D32] text-white" :
                 m.role === "error" ? "border border-red-200 bg-red-50 text-red-800" :
                 "rounded-bl-sm bg-[#F3F4F6] text-[#1A1A1A]"}`}>
                 {m.content}
                 {m.role === "assistant" && m.provider &&
-                  <div className="mt-1 text-[10px] text-[#E31837]/70">{m.provider === "gemini" ? "Powered by Gemini" : "Knowledge Base"}</div>}
+                  <div className="mt-1 text-[10px] text-[#2E7D32]/70">{m.provider === "gemini" ? "Powered by Gemini" : "Knowledge Base"}</div>}
               </div>
             </div>
           ))}
@@ -102,8 +102,8 @@ export function ChatModal({
         </div>
 
         <div className="flex items-end gap-2 border-t px-5 py-4">
-          <textarea value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={onKeyDown} placeholder="Press Enter to send • Shift+Enter for a new line" className="min-h-[52px] max-h-[140px] w-full resize-y rounded-2xl border border-[#E5E7EB] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#E31837]/20" />
-          <button onClick={()=>void send()} disabled={sending || !input.trim()} className="flex items-center gap-2 rounded-2xl bg-[#E31837] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Send</button>
+          <textarea value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={onKeyDown} placeholder="Press Enter to send • Shift+Enter for a new line" className="min-h-[52px] max-h-[140px] w-full resize-y rounded-2xl border border-[#E5E7EB] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#2E7D32]/20" />
+          <button onClick={()=>void send()} disabled={sending || !input.trim()} className="flex items-center gap-2 rounded-2xl bg-[#2E7D32] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Send</button>
         </div>
       </div>
     </div>

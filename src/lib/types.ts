@@ -125,7 +125,7 @@ export interface PriorityBenefit {
   actions: PlanResource[]
 }
 
-export interface LifeLensPlan {
+export interface SowSmartPlan {
   planId: string
   planName: string
   shortDescription: string
@@ -136,14 +136,14 @@ export interface LifeLensPlan {
   resources: PlanResource[]
 }
 
-export interface LifeLensInsights {
+export interface SowSmartInsights {
   ownerName: string
   focusGoal: string
   statement: string
   timeline: { period: string; title: string; description: string }[]
-  conversation: { speaker: "FinMate" | "You"; message: string }[]
+  conversation: { speaker: "SowSmart" | "You"; message: string }[]
   prompts: string[]
-  plans: LifeLensPlan[]
+  plans: SowSmartPlan[]
   recommendedPlans?: { id: string; name: string; reason: string; resources?: PlanResource[] }[]
   selectedPlanId: string | null
   goalTheme?: string
@@ -155,13 +155,13 @@ export interface SavedMoment {
   id: string
   category: string
   summary: string
-  timeline: LifeLensInsights["timeline"]
+  timeline: SowSmartInsights["timeline"]
   timestamp: string
-  insight: LifeLensInsights
+  insight: SowSmartInsights
 }
 
 export interface ChatEntry {
-  speaker: "FinMate" | "You"
+  speaker: "SowSmart" | "You"
   message: string
   timestamp: string
   status?: "pending" | "final"
@@ -181,6 +181,4 @@ export interface ProfileSnapshot {
   createdAt: string
 }
 
-// Aliases for compatibility with component naming conventions
-export type FinMateInsights = LifeLensInsights
-export type FinMatePlan = LifeLensPlan
+// Type aliases removed - use SowSmartInsights and SowSmartPlan directly

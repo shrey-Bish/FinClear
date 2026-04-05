@@ -3,15 +3,15 @@
 import { useState } from "react"
 import { AlertCircle, Briefcase, ExternalLink, HelpCircle, MessageCircle, Phone, RefreshCw, Send, Shield, Star, User, Users, Heart } from "lucide-react"
 
-import { openFinMateChat } from "@/components/chat-bus"
+import { openSowSmartChat } from "@/components/chat-bus"
 import { EmergencyCalculator } from "@/components/emergency-calculator"
 import { InsightsVisualization } from "@/components/insights-visualization"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import type { EnrollmentFormData, FinMateInsights } from "@/lib/types"
+import type { EnrollmentFormData, SowSmartInsights } from "@/lib/types"
 
 interface InsightsDashboardProps {
-  insights: FinMateInsights
+  insights: SowSmartInsights
   onBackToLanding: () => void
   onRegenerate: () => void
   onSendReport: () => void
@@ -24,7 +24,7 @@ const TESTIMONIALS = [
   {
     name: "Maria G.",
     role: "First-time homebuyer",
-    text: "FinMate helped me understand the difference between HMO and PPO before open enrollment. I saved $1,200/year by switching plans!",
+    text: "SowSmart helped me understand the difference between HMO and PPO before open enrollment. I saved $1,200/year by switching plans!",
     stars: 5,
   },
   {
@@ -36,7 +36,7 @@ const TESTIMONIALS = [
   {
     name: "Priya K.",
     role: "Recent graduate",
-    text: "I had no idea what renters insurance was until FinMate explained it. $20/month for $30K in coverage? Already signed up through State Farm.",
+    text: "I had no idea what renters insurance was until SowSmart explained it. $20/month for $30K in coverage? Already signed up through State Farm.",
     stars: 5,
   },
 ]
@@ -97,11 +97,11 @@ export function InsightsDashboard({
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-6">
         {/* Profile Summary Card */}
         {formData && (
-          <Card className="overflow-hidden rounded-3xl border border-[#E2D5D7] bg-gradient-to-r from-[#E31837]/5 via-white to-white p-6 shadow-lg">
+          <Card className="overflow-hidden rounded-3xl border border-[#E2D5D7] bg-gradient-to-r from-[#2E7D32]/5 via-white to-white p-6 shadow-lg">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E31837]/10">
-                  <User className="h-7 w-7 text-[#E31837]" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2E7D32]/10">
+                  <User className="h-7 w-7 text-[#2E7D32]" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-[#2A1A1A]">
@@ -125,7 +125,7 @@ export function InsightsDashboard({
               )}
               <div className="rounded-xl bg-[#FAFAFA] p-3 text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <Users className="h-4 w-4 text-[#E31837]" />
+                  <Users className="h-4 w-4 text-[#2E7D32]" />
                   <span className="text-lg font-bold text-[#2A1A1A]">{formData.dependents}</span>
                 </div>
                 <div className="text-xs text-[#6B7280]">Dependents</div>
@@ -138,7 +138,7 @@ export function InsightsDashboard({
               </div>
               <div className="rounded-xl bg-[#FAFAFA] p-3 text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <Heart className="h-4 w-4 text-[#E31837]" />
+                  <Heart className="h-4 w-4 text-[#2E7D32]" />
                   <span className="text-lg font-bold text-[#2A1A1A]">{formData.riskComfort}/5</span>
                 </div>
                 <div className="text-xs text-[#6B7280]">Risk Comfort</div>
@@ -169,7 +169,7 @@ export function InsightsDashboard({
                 <Button
                   className="ml-2 rounded-full bg-[#A41E34] px-6 py-3 text-sm font-semibold text-white hover:bg-[#7F1527]"
                   onClick={() =>
-                    openFinMateChat({
+                    openSowSmartChat({
                       prompt: topPriority
                         ? `How do I start ${topPriority.title.toLowerCase()}?`
                         : "What should I do first?",
@@ -251,9 +251,9 @@ export function InsightsDashboard({
                       size="sm"
                       variant="outline"
                       className="rounded-full border-[#A41E34]/30 text-xs font-semibold text-[#A41E34] hover:border-[#A41E34]"
-                      onClick={() => openFinMateChat({ prompt: `Help me with ${benefit.title.toLowerCase()}` })}
+                      onClick={() => openSowSmartChat({ prompt: `Help me with ${benefit.title.toLowerCase()}` })}
                     >
-                      Ask FinMate about this
+                      Ask SowSmart about this
                     </Button>
                   </div>
                 </div>
@@ -296,11 +296,11 @@ export function InsightsDashboard({
         </section>
 
         {/* Talk to Agent CTA */}
-        <Card className="rounded-3xl border-2 border-[#E31837]/20 bg-gradient-to-r from-[#FEF2F2] to-white p-6 shadow-md">
+        <Card className="rounded-3xl border-2 border-[#2E7D32]/20 bg-gradient-to-r from-[#E8F5E9] to-white p-6 shadow-md">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="rounded-2xl bg-[#E31837]/10 p-3">
-                <Phone className="h-6 w-6 text-[#E31837]" />
+              <div className="rounded-2xl bg-[#2E7D32]/10 p-3">
+                <Phone className="h-6 w-6 text-[#2E7D32]" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-[#2A1A1A]">Talk to a State Farm Agent</h2>
@@ -311,7 +311,7 @@ export function InsightsDashboard({
               href="https://www.statefarm.com/agent"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-md shadow-[#E31837]/20 transition hover:bg-[#C41230]"
+              className="inline-flex items-center justify-center rounded-full bg-[#2E7D32] px-6 py-3 text-sm font-semibold text-white shadow-md shadow-[#2E7D32]/20 transition hover:bg-[#1B5E20]"
             >
               <Shield className="mr-2 h-4 w-4" />
               Find an Agent
@@ -327,7 +327,7 @@ export function InsightsDashboard({
               <Card key={t.name} className="rounded-3xl border border-[#E2D5D7] bg-white p-5 shadow-sm">
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-[#E31837] text-[#E31837]" />
+                    <Star key={i} className="h-4 w-4 fill-[#2E7D32] text-[#2E7D32]" />
                   ))}
                 </div>
                 <p className="text-sm text-[#4D3B3B] leading-relaxed italic">"{t.text}"</p>
@@ -344,14 +344,14 @@ export function InsightsDashboard({
         <Card className="rounded-3xl border border-[#E2D5D7] bg-white p-6 shadow-md">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-[#2A1A1A]">Keep exploring with FinMate</h2>
+              <h2 className="text-lg font-semibold text-[#2A1A1A]">Keep exploring with SowSmart</h2>
               <p className="text-sm text-[#4D3B3B]">Jump back into chat for follow-up questions or share your plan.</p>
             </div>
             <Button
               className="rounded-full bg-[#A41E34] px-6 py-3 text-sm font-semibold text-white hover:bg-[#7F1527]"
-              onClick={() => openFinMateChat({ prompt: "What should I tackle next based on my plan?" })}
+              onClick={() => openSowSmartChat({ prompt: "What should I tackle next based on my plan?" })}
             >
-              Chat with FinMate
+              Chat with SowSmart
               <MessageCircle className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -360,7 +360,7 @@ export function InsightsDashboard({
         {/* Disclaimer Footer */}
         <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 text-center">
           <p className="text-xs text-[#6B7280] leading-relaxed">
-            <strong>Disclaimer:</strong> FinMate provides general financial education and guidance only. 
+            <strong>Disclaimer:</strong> SowSmart provides general financial education and guidance only. 
             This is not personalized financial, insurance, or investment advice. For coverage decisions, 
             please consult with a licensed State Farm agent. Your specific situation may vary. 
             State Farm® and its logo are registered trademarks of State Farm Mutual Automobile Insurance Company.
@@ -374,10 +374,10 @@ export function InsightsDashboard({
           onClick={() => {
             setShowHelp(!showHelp)
             if (!showHelp) {
-              openFinMateChat({ prompt: "I'm confused about my results. Can you explain them in simpler terms?" })
+              openSowSmartChat({ prompt: "I'm confused about my results. Can you explain them in simpler terms?" })
             }
           }}
-          className="flex items-center gap-2 rounded-full bg-[#E31837] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#E31837]/30 transition hover:bg-[#C41230] hover:shadow-xl"
+          className="flex items-center gap-2 rounded-full bg-[#2E7D32] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#2E7D32]/30 transition hover:bg-[#1B5E20] hover:shadow-xl"
         >
           <HelpCircle className="h-5 w-5" />
           <span className="hidden sm:inline">Confused? Get help</span>

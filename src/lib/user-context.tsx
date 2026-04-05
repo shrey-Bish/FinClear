@@ -48,7 +48,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setUser(parsed)
       }
     } catch (error) {
-      console.warn("Failed to restore LifeLens user", error)
+      console.warn("Failed to restore SowSmart user", error)
     } finally {
       setIsLoading(false)
     }
@@ -65,7 +65,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
       } catch (error) {
-        console.warn("Failed to persist LifeLens user", error)
+        console.warn("Failed to persist SowSmart user", error)
       }
     }
   }
@@ -76,7 +76,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       try {
         window.localStorage.removeItem(STORAGE_KEY)
       } catch (error) {
-        console.warn("Failed to clear LifeLens user", error)
+        console.warn("Failed to clear SowSmart user", error)
       }
     }
   }

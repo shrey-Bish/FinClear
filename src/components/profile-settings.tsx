@@ -236,7 +236,7 @@ export function ProfileSettings({
           <h2 className="text-xl font-bold">Personal Information: </h2>
           {!draft ? (
             <p className="text-sm text-muted-foreground">
-              Complete the FinMate quiz to unlock your editable profile.
+              Complete the SowSmart quiz to unlock your editable profile.
             </p>
           ) : (
             <div className="space-y-4">

@@ -31,7 +31,7 @@ import {
 } from "@/lib/storage"
 import type {
   EnrollmentFormData,
-  LifeLensInsights,
+  SowSmartInsights,
   ProfileSnapshot,
   SavedMoment,
   ScreenKey,
@@ -48,9 +48,9 @@ function createFreshForm(): EnrollmentFormData {
 
 export default function Home() {
   const { user, isLoading: userLoading, login, logout } = useUser()
-  const [currentScreen, setCurrentScreen] = useState<ScreenKey>(() => "quiz")
+  const [currentScreen, setCurrentScreen] = useState<ScreenKey>(() => "landing")
   const [formData, setFormData] = useState<EnrollmentFormData | null>(() => createFreshForm())
-  const [insights, setInsights] = useState<LifeLensInsights | null>(null)
+  const [insights, setInsights] = useState<SowSmartInsights | null>(null)
   const [savedMoments, setSavedMoments] = useState<SavedMoment[]>([])
   const [profileCreatedAt, setProfileCreatedAt] = useState<string>(() => new Date().toISOString())
   const [isGenerating, setIsGenerating] = useState(false)
@@ -77,7 +77,7 @@ export default function Home() {
       setFormData(createFreshForm())
     }
 
-    const storedInsights = readStorage<LifeLensInsights | null>(INSIGHTS_STORAGE_KEY, null)
+    const storedInsights = readStorage<SowSmartInsights | null>(INSIGHTS_STORAGE_KEY, null)
     if (storedInsights) {
       setInsights(storedInsights)
       setHasCompletedQuiz(true)
@@ -151,7 +151,7 @@ export default function Home() {
     setFormData(data)
   }
 
-  const appendMomentForInsights = (nextInsights: LifeLensInsights) => {
+  const appendMomentForInsights = (nextInsights: SowSmartInsights) => {
     const timestamp = new Date().toISOString()
     const momentId = `${nextInsights.themeKey ?? "plan"}-${Date.now()}`
     const newMoment: SavedMoment = {
@@ -255,7 +255,7 @@ export default function Home() {
     }
   }
 
-  const handleSelectMoment = (selectedInsight: LifeLensInsights) => {
+  const handleSelectMoment = (selectedInsight: SowSmartInsights) => {
     setInsights(selectedInsight)
     setCurrentScreen("insights")
   }
@@ -349,9 +349,9 @@ export default function Home() {
 
   if (!isHydrated || userLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F7F4F2] text-[#A41E34]">
+      <div className="flex min-h-screen items-center justify-center bg-[#F1F8E9] text-[#2E7D32]">
         <div className="text-center">
-          <div className="mb-4 text-2xl font-semibold text-[#E31837]">FinMate</div>
+          <div className="mb-4 text-2xl font-semibold text-[#2E7D32]">🌱 SowSmart</div>
           <div className="text-sm">Preparing your financial guidance...</div>
         </div>
       </div>
@@ -362,7 +362,7 @@ export default function Home() {
 
   return (
     <>
-      <main className={cn("min-h-screen bg-[#F7F4F2] pb-24", isGenerating && "pointer-events-none opacity-95")}> 
+      <main className={cn("min-h-screen bg-[#F1F8E9] pb-24", isGenerating && "pointer-events-none opacity-95")}> 
       <AnimatePresence mode="wait" initial={false}>
         {currentScreen === "landing" && (
           <motion.div
@@ -483,7 +483,7 @@ export default function Home() {
 
       </main>
       <ChatModal
-        baseContext={{ app: "LifeLens" }}
+        baseContext={{ app: "SowSmart" }}
         focusGoal={insights?.focusGoal}
         persona={insights?.goalTheme}
         userId={formData?.userId ?? undefined}

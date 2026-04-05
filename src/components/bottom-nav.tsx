@@ -20,7 +20,7 @@ export function BottomNav({ currentScreen, onNavigate }: BottomNavProps) {
   ]
 
   return (
-    <nav className="fixed bottom-4 left-1/2 z-50 w-[min(360px,92vw)] -translate-x-1/2 rounded-3xl border border-[#E5E7EB] bg-white/95 px-2 py-3 shadow-xl shadow-[#E31837]/10">
+    <nav className="fixed bottom-4 left-1/2 z-50 w-[min(360px,92vw)] -translate-x-1/2 rounded-3xl border border-[#C8E6C9] bg-white/95 px-2 py-3 shadow-xl shadow-[#2E7D32]/10">
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon
@@ -32,7 +32,7 @@ export function BottomNav({ currentScreen, onNavigate }: BottomNavProps) {
               onClick={() => onNavigate(item.id as ScreenKey)}
               className={cn(
                 "flex flex-col items-center gap-1 px-3 py-1 text-xs font-semibold transition-all touch-manipulation active:scale-95",
-                isActive ? "text-[#E31837]" : "text-[#6B7280] hover:text-[#E31837]",
+                isActive ? "text-[#2E7D32]" : "text-[#6B7280] hover:text-[#2E7D32]",
               )}
             >
               <Icon className={cn("h-5 w-5", isActive && "animate-bounce-in")} />

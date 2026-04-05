@@ -240,7 +240,7 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-white/60 p-3 border border-white/80">
             <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="h-4 w-4 text-[#E31837]" />
+              <DollarSign className="h-4 w-4 text-[#2E7D32]" />
               <span className="text-xs text-[#6B7280]">Estimated Fund</span>
             </div>
             <div className="text-lg font-bold text-[#1A1A1A]">
@@ -249,7 +249,7 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
           </div>
           <div className="rounded-xl bg-white/60 p-3 border border-white/80">
             <div className="flex items-center gap-2 mb-1">
-              <Target className="h-4 w-4 text-[#E31837]" />
+              <Target className="h-4 w-4 text-[#2E7D32]" />
               <span className="text-xs text-[#6B7280]">Target Goal</span>
             </div>
             <div className="text-lg font-bold text-[#1A1A1A]">
@@ -261,7 +261,7 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
         {/* Show Details Toggle */}
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="mt-4 flex items-center gap-2 text-sm font-medium text-[#E31837] hover:text-[#C41230] transition"
+          className="mt-4 flex items-center gap-2 text-sm font-medium text-[#2E7D32] hover:text-[#1B5E20] transition"
         >
           {showDetails ? "Hide" : "Show"} calculation details
           <ChevronRight className={cn("h-4 w-4 transition-transform", showDetails && "rotate-90")} />
@@ -292,7 +292,7 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
                 {metrics.gap > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-[#6B7280]">Gap to goal</span>
-                    <span className="font-medium text-[#E31837]">${metrics.gap.toLocaleString()}</span>
+                    <span className="font-medium text-[#2E7D32]">${metrics.gap.toLocaleString()}</span>
                   </div>
                 )}
               </div>
@@ -310,8 +310,8 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
           className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-2xl bg-[#E31837]/10 p-3">
-              <Sparkles className="h-5 w-5 text-[#E31837]" />
+            <div className="rounded-2xl bg-[#2E7D32]/10 p-3">
+              <Sparkles className="h-5 w-5 text-[#2E7D32]" />
             </div>
             <div>
               <h4 className="font-bold text-[#1A1A1A]">Your Path to Security</h4>
@@ -324,7 +324,7 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
             <div className="rounded-2xl bg-[#FAFAFA] p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-[#6B7280]">Save per week to reach goal in 1 year</span>
-                <span className="text-lg font-bold text-[#E31837]">
+                <span className="text-lg font-bold text-[#2E7D32]">
                   ${metrics.weeklyContribution.toLocaleString()}
                 </span>
               </div>
@@ -336,21 +336,21 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
             {/* Quick tips */}
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-[#E31837] mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#1A1A1A]">Automate your savings</div>
                   <div className="text-xs text-[#6B7280]">Set up automatic transfers to a separate high-yield savings account</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-[#E31837] mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#1A1A1A]">Start small, build momentum</div>
                   <div className="text-xs text-[#6B7280]">Even $25/week adds up to $1,300/year - every bit counts</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-[#E31837] mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#1A1A1A]">Keep it accessible</div>
                   <div className="text-xs text-[#6B7280]">Your emergency fund should be liquid - not in stocks or CDs</div>
@@ -361,7 +361,7 @@ export function EmergencyCalculator(props: EmergencyCalculatorProps) {
 
           {/* Talk to Agent CTA */}
           <div className="mt-4 pt-4 border-t border-[#E5E7EB]">
-            <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#E31837] py-3 px-6 text-sm font-semibold text-white hover:bg-[#C41230] transition shadow-sm">
+            <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#2E7D32] py-3 px-6 text-sm font-semibold text-white hover:bg-[#1B5E20] transition shadow-sm">
               <Shield className="h-4 w-4" />
               Talk to a State Farm Agent
             </button>
@@ -467,7 +467,7 @@ export function EmergencyScenarioCard({
   return (
     <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4">
       <div className="flex items-center gap-3 mb-2">
-        <Icon className="h-5 w-5 text-[#E31837]" />
+        <Icon className="h-5 w-5 text-[#2E7D32]" />
         <span className="font-medium text-[#1A1A1A]">{s.title}</span>
       </div>
       <p className="text-xs text-[#6B7280] mb-2">{s.description}</p>

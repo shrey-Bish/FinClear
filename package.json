@@ -1,7 +1,7 @@
 {
-  "name": "finmate-statefarm",
+  "name": "sowsmart",
   "version": "1.0.0",
-  "description": "FinMate - AI-Powered Financial Wellness Platform for State Farm Hackathon",
+  "description": "SowSmart - Plant Good Financial Habits Early | AI-Powered Financial Wellness Platform",
   "private": true,
   "scripts": {
     "dev": "next dev",

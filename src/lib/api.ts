@@ -1,4 +1,4 @@
-import type { ChatEntry, EnrollmentFormData, FinMateInsights, PlanResource } from "./types"
+import type { ChatEntry, EnrollmentFormData, SowSmartInsights, PlanResource } from "./types"
 
 interface ApiResult<T> {
   data?: T
@@ -83,15 +83,15 @@ function profileToRecord(profile: EnrollmentFormData) {
   }
 }
 
-function coerceRemotePlans(raw: FinMateInsights | (FinMateInsights & { recommendedPlans?: unknown })) {
+function coerceRemotePlans(raw: SowSmartInsights | (SowSmartInsights & { recommendedPlans?: unknown })) {
   type RemotePlan = { id?: string; name?: string; reason?: string; resources?: PlanResource[]; monthly_cost_estimate?: string };
-  const insights = raw as FinMateInsights & { recommendedPlans?: RemotePlan[] }
+  const insights = raw as SowSmartInsights & { recommendedPlans?: RemotePlan[] }
   if (!insights.plans && Array.isArray(insights.recommendedPlans)) {
     insights.plans = insights.recommendedPlans.map((plan: RemotePlan, index) => ({
       planId: plan.id ?? `remote-plan-${index + 1}`,
       planName: plan.name ?? `Plan ${index + 1}`,
       shortDescription: plan.reason ?? "Personalized option",
-      reasoning: plan.reason ?? "FinMate tailored this path for your profile.",
+      reasoning: plan.reason ?? "SowSmart tailored this path for your profile.",
       monthlyCostEstimate: plan.monthly_cost_estimate ?? "—",
       riskMatchScore: 80,
       highlights: [plan.reason ?? "Tailored guidance"],
@@ -119,14 +119,14 @@ export async function upsertUser(profile: EnrollmentFormData): Promise<ApiResult
     const body = (await response.json()) as { userId: string }
     return { data: body }
   } catch (error) {
-    console.error("Failed to upsert FinMate user", error)
+    console.error("Failed to upsert SowSmart user", error)
     return { error: error instanceof Error ? error.message : "Unknown error" }
   }
 }
 
 export async function requestPlans(
   userId: string
-): Promise<ApiResult<{ insights: FinMateInsights }>> {
+): Promise<ApiResult<{ insights: SowSmartInsights }>> {
   try {
     const payload: Record<string, unknown> = { userId }
     if (lastSubmittedProfile) {
@@ -143,7 +143,7 @@ export async function requestPlans(
       return { error: errorBody.error ?? "Unable to generate plans" }
     }
 
-    const body = (await response.json()) as { insights: FinMateInsights }
+    const body = (await response.json()) as { insights: SowSmartInsights }
     return { data: { insights: coerceRemotePlans(body.insights) } }
   } catch (error) {
     console.error("Failed to generate plans", error)
@@ -153,7 +153,7 @@ export async function requestPlans(
 
 export async function fetchInsights(
   userId: string
-): Promise<ApiResult<{ insights: FinMateInsights; usingPlaceholder: boolean }>> {
+): Promise<ApiResult<{ insights: SowSmartInsights; usingPlaceholder: boolean }>> {
   try {
     const response = await fetch("/api/insights", {
       method: "POST",
@@ -167,7 +167,7 @@ export async function fetchInsights(
     }
 
     const body = (await response.json()) as {
-      insights: FinMateInsights
+      insights: SowSmartInsights
       usingPlaceholder: boolean
       dataSource: string
     }

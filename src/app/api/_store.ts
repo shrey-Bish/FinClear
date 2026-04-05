@@ -1,8 +1,8 @@
-import type { ChatEntry, EnrollmentFormData, LifeLensInsights } from "@/lib/types"
+import type { ChatEntry, EnrollmentFormData, SowSmartInsights } from "@/lib/types"
 
 interface MemoryStore {
   profiles: Map<string, EnrollmentFormData>
-  insights: Map<string, LifeLensInsights>
+  insights: Map<string, SowSmartInsights>
   chats: Map<string, ChatEntry[]>
 }
 

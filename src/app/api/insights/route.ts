@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { fetchUserProfile, fetchUserChats, isDatabaseConfigured } from "@/lib/database"
 import { buildInsights, withDerivedMetrics } from "@/lib/insights"
 import { getStore } from "../_store"
-import type { EnrollmentFormData, LifeLensInsights, PlanPreferenceOption } from "@/lib/types"
+import type { EnrollmentFormData, SowSmartInsights, PlanPreferenceOption } from "@/lib/types"
 
 export const runtime = "nodejs"
 
@@ -13,7 +13,7 @@ interface GenerateInsightsRequest {
 }
 
 interface GenerateInsightsResponse {
-  insights: LifeLensInsights
+  insights: SowSmartInsights
   usingPlaceholder: boolean
   dataSource: 'database' | 'memory' | 'placeholder'
 }
@@ -87,7 +87,7 @@ function dbProfileToFormData(dbProfile: any): EnrollmentFormData {
 /**
  * Generate placeholder insights when no real data is available
  */
-function generatePlaceholderInsights(userId: string): LifeLensInsights {
+function generatePlaceholderInsights(userId: string): SowSmartInsights {
   const placeholderProfile: EnrollmentFormData = {
     userId,
     fullName: 'Sample User',

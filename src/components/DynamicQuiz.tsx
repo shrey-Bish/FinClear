@@ -245,13 +245,13 @@ useEffect(() => {
             type="button"
             onClick={goBack}
             disabled={submitting}
-            className="flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-semibold text-[#E31837] shadow-sm transition sm:px-4 sm:text-sm disabled:opacity-50"
+            className="flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-semibold text-[#2E7D32] shadow-sm transition sm:px-4 sm:text-sm disabled:opacity-50"
           >
             <ArrowLeft className="h-4 w-4" /> Back
           </button>
           <div className="text-right">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#E31837] sm:text-xs">
-              {phase === "trust" ? "Trust Passport" : phase === "steps" && current ? current.section : "FinMate Survey"}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#2E7D32] sm:text-xs">
+              {phase === "trust" ? "Trust Passport" : phase === "steps" && current ? current.section : "SowSmart Survey"}
             </p>
             <p className="text-[10px] text-[#6B7280] sm:text-xs">
               {phase === "trust"
@@ -273,11 +273,11 @@ useEffect(() => {
             aria-valuenow={Math.round(progress)}
           >
             <div
-              className="h-full bg-gradient-to-r from-[#E31837] to-[#FF6B6B] transition-all"
+              className="h-full bg-gradient-to-r from-[#2E7D32] to-[#66BB6A] transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E31837]">{progressLabel}</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#2E7D32]">{progressLabel}</span>
         </div>
       </header>
 
@@ -296,8 +296,8 @@ useEffect(() => {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <Shield className="h-6 w-6 text-[#E31837]" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">Trust Passport</p>
+                    <Shield className="h-6 w-6 text-[#2E7D32]" />
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2E7D32]/80">Trust Passport</p>
                   </div>
                   <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Your data, your control</h1>
                   <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
@@ -313,11 +313,11 @@ useEffect(() => {
                   return (
                     <div
                       key={item.title}
-                      className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 transition hover:border-[#E31837]/30"
+                      className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 transition hover:border-[#2E7D32]/30"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FEF2F2]">
-                          <Icon className="h-5 w-5 text-[#E31837]" />
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F5E9]">
+                          <Icon className="h-5 w-5 text-[#2E7D32]" />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-[#1A1A1A]">{item.title}</h3>
@@ -355,7 +355,7 @@ useEffect(() => {
                 <Switch
                   checked={trustAccepted}
                   onCheckedChange={setTrustAccepted}
-                  className="data-[state=checked]:bg-[#E31837]"
+                  className="data-[state=checked]:bg-[#2E7D32]"
                 />
                 <div>
                   <p className="text-sm font-semibold text-[#1A1A1A]">I understand how my data will be used</p>
@@ -376,7 +376,7 @@ useEffect(() => {
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">Your Profile</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2E7D32]/80">Your Profile</p>
                   <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Welcome, {answers.preferredName || answers.fullName || "there"}</h1>
                   <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
                     Review your basic information below. We'll use this to personalize your financial wellness recommendations.
@@ -401,7 +401,7 @@ useEffect(() => {
                 <div className="grid gap-3 text-sm text-[#4B5563] sm:grid-cols-2">
                   {HR_CARD_COPY.map((item) => (
                     <Card key={item.label} className="rounded-2xl border border-[#F3F4F6] bg-[#FAFAFA] p-4 shadow-none">
-                      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E31837]">{item.label}</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#2E7D32]">{item.label}</p>
                       <p className="mt-1 text-sm font-semibold text-[#1A1A1A]">{item.accessor(answers) || "—"}</p>
                     </Card>
                   ))}
@@ -423,7 +423,7 @@ useEffect(() => {
                 <div className="space-y-3">
                   {showSectionIntro && (
                     <div className="space-y-2">
-                      <span className="inline-flex items-center rounded-full bg-[#FEF2F2] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#E31837]">
+                      <span className="inline-flex items-center rounded-full bg-[#E8F5E9] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32]">
                         {current.section}
                       </span>
                       {current.sectionDescription && (
@@ -433,7 +433,7 @@ useEffect(() => {
                       )}
                     </div>
                   )}
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2E7D32]/80">
                     Question {index + 1}
                   </p>
                   <h1 className="text-xl font-semibold text-[#1A1A1A] sm:text-2xl">{current.title}</h1>
@@ -459,10 +459,10 @@ useEffect(() => {
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#E31837]/80">Summary</p>
-                  <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Here’s your FinMate profile</h1>
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2E7D32]/80">Summary</p>
+                  <h1 className="mt-3 text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Here’s your SowSmart profile</h1>
                   <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
-                    Confirm your answers and share consent so FinMate can generate your personalized benefits plans.
+                    Confirm your answers and share consent so SowSmart can generate your personalized benefits plans.
                   </p>
                 </div>
                 <div className="hidden h-8 w-8 rounded-full border border-[#E5E7EB] sm:block" aria-hidden="true" />
@@ -597,7 +597,7 @@ useEffect(() => {
               <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-[#1A1A1A]">I agree to share this profile for plan generation</p>
-                  <p className="text-xs text-[#E31837]">Required so FinMate can generate recommendations and chat summaries.</p>
+                  <p className="text-xs text-[#2E7D32]">Required so SowSmart can generate recommendations and chat summaries.</p>
                 </div>
                 <Switch
                   checked={consentChecked}
@@ -611,9 +611,9 @@ useEffect(() => {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-4 text-sm font-semibold text-[#E31837]"
+                  className="mt-4 text-sm font-semibold text-[#2E7D32]"
                 >
-                  Analyzing your FinMate profile…
+                  Analyzing your SowSmart profile…
                 </motion.p>
               )}
             </motion.section>
@@ -625,7 +625,7 @@ useEffect(() => {
             variant="outline"
             onClick={goBack}
             disabled={submitting}
-            className="rounded-full border-[#E5E7EB] px-5 py-3 text-sm font-semibold text-[#E31837] shadow-sm transition disabled:opacity-50"
+            className="rounded-full border-[#E5E7EB] px-5 py-3 text-sm font-semibold text-[#2E7D32] shadow-sm transition disabled:opacity-50"
           >
             Back
           </Button>
@@ -634,7 +634,7 @@ useEffect(() => {
             <Button
               onClick={handleSubmit}
               disabled={!consentChecked || submitting}
-              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C41230] disabled:opacity-40"
+              className="inline-flex items-center justify-center rounded-full bg-[#2E7D32] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1B5E20] disabled:opacity-40"
             >
               {submitting ? "Analyzing…" : "Generate my insights"}
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -643,7 +643,7 @@ useEffect(() => {
             <Button
               onClick={goNext}
               disabled={!trustAccepted}
-              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C41230] disabled:opacity-40"
+              className="inline-flex items-center justify-center rounded-full bg-[#2E7D32] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1B5E20] disabled:opacity-40"
             >
               I understand, continue
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -652,7 +652,7 @@ useEffect(() => {
             <Button
               onClick={goNext}
               disabled={submitting || (phase === "steps" && !currentIsValid)}
-              className="inline-flex items-center justify-center rounded-full bg-[#E31837] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C41230] disabled:opacity-40"
+              className="inline-flex items-center justify-center rounded-full bg-[#2E7D32] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1B5E20] disabled:opacity-40"
             >
               {phase === "hr" ? "Start survey" : "Continue"}
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -673,7 +673,7 @@ function renderField(
     case "number":
       return (
         <div className="space-y-2">
-          <Label className="text-sm text-[#E31837]">Your answer</Label>
+          <Label className="text-sm text-[#2E7D32]">Your answer</Label>
           <Input
             type="number"
             min={question.min}
@@ -683,7 +683,7 @@ function renderField(
             className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] px-4 text-base"
           />
           {question.helperText && (
-            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
+            <p className="text-xs text-[#2E7D32]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -696,24 +696,24 @@ function renderField(
               type="button"
               onClick={() => onChange(option.value)}
               className={cn(
-                "flex w-full items-center justify-between rounded-2xl border px-4 py-4 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E31837]/30",
+                "flex w-full items-center justify-between rounded-2xl border px-4 py-4 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7D32]/30",
                 value === option.value
-                  ? "border-transparent bg-gradient-to-r from-[#E31837] to-[#FF6B6B] text-white"
-                  : "border-[#E5E7EB] bg-[#FAFAFA] text-[#1A1A1A] hover:border-[#E31837]/40",
+                  ? "border-transparent bg-gradient-to-r from-[#2E7D32] to-[#66BB6A] text-white"
+                  : "border-[#E5E7EB] bg-[#FAFAFA] text-[#1A1A1A] hover:border-[#2E7D32]/40",
               )}
               aria-pressed={value === option.value}
             >
               <span>
                 <span className="block font-semibold">{option.label}</span>
                 {option.helper && (
-                  <span className={cn("text-xs", value === option.value ? "text-white/80" : "text-[#E31837]")}>{option.helper}</span>
+                  <span className={cn("text-xs", value === option.value ? "text-white/80" : "text-[#2E7D32]")}>{option.helper}</span>
                 )}
               </span>
               <ArrowRight className="h-4 w-4" />
             </button>
           ))}
           {question.helperText && (
-            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
+            <p className="text-xs text-[#2E7D32]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -733,13 +733,13 @@ function renderField(
               aria-label={question.title}
             />
             {(minLabel || maxLabel) && (
-              <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#E31837]/70">
+              <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#2E7D32]/70">
                 <span>{minLabel}</span>
                 <span>{maxLabel}</span>
               </div>
             )}
           </div>
-          <p className="text-sm font-semibold text-[#E31837]">
+          <p className="text-sm font-semibold text-[#2E7D32]">
             {question.valueFormatter
               ? question.valueFormatter(numericValue)
               : question.id === "riskComfort"
@@ -747,7 +747,7 @@ function renderField(
                 : `${numericValue}`}
           </p>
           {question.helperText && (
-            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
+            <p className="text-xs text-[#2E7D32]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -761,10 +761,10 @@ function renderField(
               type="button"
               onClick={() => onChange(choice.value)}
               className={cn(
-                "w-full rounded-full border px-5 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E31837]/30 sm:w-auto",
+                "w-full rounded-full border px-5 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7D32]/30 sm:w-auto",
                 value === choice.value
-                  ? "border-transparent bg-gradient-to-r from-[#E31837] to-[#FF6B6B] text-white"
-                  : "border-[#E5E7EB] bg-[#FAFAFA] text-[#E31837] hover:border-[#E31837]/40",
+                  ? "border-transparent bg-gradient-to-r from-[#2E7D32] to-[#66BB6A] text-white"
+                  : "border-[#E5E7EB] bg-[#FAFAFA] text-[#2E7D32] hover:border-[#2E7D32]/40",
               )}
               aria-pressed={value === choice.value}
             >
@@ -772,7 +772,7 @@ function renderField(
             </button>
           ))}
           {question.helperText && (
-            <p className="w-full text-xs text-[#E31837]/80">{question.helperText}</p>
+            <p className="w-full text-xs text-[#2E7D32]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -795,10 +795,10 @@ function renderField(
                   onChange(next)
                 }}
                 className={cn(
-                  "rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E31837]/30",
+                  "rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7D32]/30",
                   active
-                    ? "border-transparent bg-gradient-to-r from-[#E31837] to-[#FF6B6B] text-white"
-                    : "border-[#E5E7EB] bg-[#FAFAFA] text-[#E31837] hover:border-[#E31837]/40",
+                    ? "border-transparent bg-gradient-to-r from-[#2E7D32] to-[#66BB6A] text-white"
+                    : "border-[#E5E7EB] bg-[#FAFAFA] text-[#2E7D32] hover:border-[#2E7D32]/40",
                 )}
                 aria-pressed={active}
               >
@@ -807,14 +807,14 @@ function renderField(
             )
           })}
           {question.helperText && (
-            <p className="w-full text-xs text-[#E31837]/80">{question.helperText}</p>
+            <p className="w-full text-xs text-[#2E7D32]/80">{question.helperText}</p>
           )}
         </div>
       )
     case "textarea":
       return (
         <div className="space-y-2">
-          <Label className="text-sm text-[#E31837]">Share details</Label>
+          <Label className="text-sm text-[#2E7D32]">Share details</Label>
           <Textarea
             value={typeof value === "string" ? value : ""}
             rows={4}
@@ -823,7 +823,7 @@ function renderField(
             className="rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3 text-sm"
           />
           {question.helperText && (
-            <p className="text-xs text-[#E31837]/80">{question.helperText}</p>
+            <p className="text-xs text-[#2E7D32]/80">{question.helperText}</p>
           )}
         </div>
       )
@@ -835,7 +835,7 @@ function renderField(
 function SummarySection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E31837]">{title}</h2>
+      <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-[#2E7D32]">{title}</h2>
       <div className="space-y-3">{children}</div>
     </section>
   )
@@ -844,7 +844,7 @@ function SummarySection({ title, children }: { title: string; children: ReactNod
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1 rounded-2xl border border-[#F3F4F6] bg-[#FAFAFA] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E31837]">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#2E7D32]">{label}</span>
       <span className="text-sm font-semibold text-[#1A1A1A]">{value}</span>
     </div>
   )

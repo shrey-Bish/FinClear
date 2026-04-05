@@ -258,7 +258,7 @@ const SECTION_ORDER: { title: string; description: string; questions: Omit<QuizQ
       {
         id: "coveragePreference",
         title: "Who should this coverage include?",
-        prompt: "FinMate adjusts priorities based on the household you select.",
+        prompt: "SowSmart adjusts priorities based on the household you select.",
         type: "select",
         options: COVERAGE_OPTIONS,
       },
@@ -310,7 +310,7 @@ const SECTION_ORDER: { title: string; description: string; questions: Omit<QuizQ
       {
         id: "healthConditionSummary",
         title: "Provide a quick summary",
-        prompt: "List diagnoses or care needs FinMate should keep in mind.",
+        prompt: "List diagnoses or care needs SowSmart should keep in mind.",
         type: "textarea",
         placeholder: "e.g., Asthma for my child, hypertension for partner",
         condition: (answers) => answers.hasHealthConditions === true,
@@ -448,7 +448,7 @@ const SECTION_ORDER: { title: string; description: string; questions: Omit<QuizQ
       {
         id: "retirementContributionRate",
         title: "What percentage of income do you contribute?",
-        prompt: "This helps FinMate size catch-up opportunities.",
+        prompt: "This helps SowSmart size catch-up opportunities.",
         type: "slider",
         min: 0,
         max: 15,
@@ -458,7 +458,7 @@ const SECTION_ORDER: { title: string; description: string; questions: Omit<QuizQ
       },
       {
         id: "wantsRetirementGuidance",
-        title: "Would you like FinMate to suggest optimized targets?",
+        title: "Would you like SowSmart to suggest optimized targets?",
         prompt: "We’ll share nudges tailored to your retirement goals.",
         type: "boolean-choice",
         condition: (answers) => answers.contributesToRetirement !== null,
@@ -467,7 +467,7 @@ const SECTION_ORDER: { title: string; description: string; questions: Omit<QuizQ
   },
   {
     title: "Plan Experience & Consent",
-    description: "Choose how FinMate supports you through enrollment.",
+    description: "Choose how SowSmart supports you through enrollment.",
     questions: [
       {
         id: "confidenceInsuranceTerms",
@@ -482,7 +482,7 @@ const SECTION_ORDER: { title: string; description: string; questions: Omit<QuizQ
       },
       {
         id: "guidancePreference",
-        title: "How would you like FinMate to guide you?",
+        title: "How would you like SowSmart to guide you?",
         prompt: "Pick the coaching style that works best on mobile and desktop.",
         type: "select",
         options: GUIDANCE_PREFERENCE_OPTIONS,

@@ -14,7 +14,7 @@ export type ChatResponse =
   | { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string }
   | { error: string; [k: string]: unknown }
 
-export async function askFinMate(input: ChatPayload): Promise<ChatResponse> {
+export async function askSowSmart(input: ChatPayload): Promise<ChatResponse> {
   const res = await fetch("/api/chat", { 
     method: "POST", 
     headers: { "Content-Type": "application/json" }, 

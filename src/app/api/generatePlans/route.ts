@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 
 import { getStore } from "../_store"
 import { buildInsights, buildPriorityBenefits, withDerivedMetrics } from "@/lib/insights"
-import type { EnrollmentFormData, LifeLensInsights, PriorityBenefit } from "@/lib/types"
+import type { EnrollmentFormData, SowSmartInsights, PriorityBenefit } from "@/lib/types"
 
 export const runtime = "nodejs"
 
@@ -73,8 +73,8 @@ Generate exactly 4-5 priority benefits and 4 timeline items. Make the recommenda
 function parseGeminiInsights(
   text: string,
   profile: EnrollmentFormData,
-  fallbackInsights: LifeLensInsights
-): LifeLensInsights {
+  fallbackInsights: SowSmartInsights
+): SowSmartInsights {
   try {
     // Clean response: strip markdown fences if present
     let cleaned = text.trim()

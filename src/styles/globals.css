@@ -4,92 +4,92 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* State Farm brand colors - clean, professional, trustworthy */
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.13 0.01 0);
-  --card: oklch(1 0 0 / 0.85);
-  --card-foreground: oklch(0.13 0.01 0);
+  /* SowSmart brand colors - Growth, Trust, Financial Wellness */
+  --background: oklch(0.99 0.005 145);
+  --foreground: oklch(0.15 0.02 145);
+  --card: oklch(1 0 0 / 0.9);
+  --card-foreground: oklch(0.15 0.02 145);
   --popover: oklch(1 0 0 / 0.98);
-  --popover-foreground: oklch(0.13 0.01 0);
+  --popover-foreground: oklch(0.15 0.02 145);
 
-  /* State Farm primary red #E31837 */
-  --primary: oklch(0.5 0.22 25);
+  /* SowSmart primary green #2E7D32 - growth, prosperity */
+  --primary: oklch(0.52 0.14 145);
   --primary-foreground: oklch(0.99 0 0);
 
-  /* State Farm secondary - darker red #C41230 for hover states */
-  --accent: oklch(0.45 0.2 25);
+  /* SowSmart accent - teal #00897B for secondary actions */
+  --accent: oklch(0.55 0.1 175);
   --accent-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.97 0.005 0);
-  --secondary-foreground: oklch(0.13 0.01 0);
-  --muted: oklch(0.95 0.005 0);
-  --muted-foreground: oklch(0.45 0.01 0);
+  --secondary: oklch(0.97 0.008 145);
+  --secondary-foreground: oklch(0.15 0.02 145);
+  --muted: oklch(0.95 0.01 145);
+  --muted-foreground: oklch(0.45 0.02 145);
 
-  --destructive: oklch(0.5 0.22 25);
+  --destructive: oklch(0.55 0.2 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.005 0 / 0.5);
-  --input: oklch(0.9 0.005 0 / 0.6);
-  --ring: oklch(0.5 0.22 25);
+  --border: oklch(0.88 0.02 145 / 0.5);
+  --input: oklch(0.9 0.015 145 / 0.6);
+  --ring: oklch(0.52 0.14 145);
 
   --radius: 1rem;
-  --glass-bg: oklch(1 0 0 / 0.1);
-  --glass-border: oklch(1 0 0 / 0.2);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --glass-bg: oklch(0.52 0.14 145 / 0.08);
+  --glass-border: oklch(0.52 0.14 145 / 0.15);
+  --chart-1: oklch(0.52 0.14 145);
+  --chart-2: oklch(0.55 0.1 175);
+  --chart-3: oklch(0.65 0.15 85);
+  --chart-4: oklch(0.7 0.12 200);
+  --chart-5: oklch(0.6 0.1 280);
+  --sidebar: oklch(0.985 0.005 145);
+  --sidebar-foreground: oklch(0.145 0.02 145);
+  --sidebar-primary: oklch(0.25 0.05 145);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: oklch(0.97 0.01 145);
+  --sidebar-accent-foreground: oklch(0.25 0.05 145);
+  --sidebar-border: oklch(0.9 0.02 145);
+  --sidebar-ring: oklch(0.52 0.14 145);
 }
 
 .dark {
-  /* Dark mode with surface color #1C1C1F as specified */
-  --background: oklch(0.12 0.02 30);
-  --foreground: oklch(0.98 0.01 30);
-  --card: oklch(0.13 0.02 30 / 0.7);
-  --card-foreground: oklch(0.98 0.01 30);
-  --popover: oklch(0.12 0.02 30 / 0.95);
-  --popover-foreground: oklch(0.98 0.01 30);
+  /* Dark mode - SowSmart theme */
+  --background: oklch(0.14 0.02 145);
+  --foreground: oklch(0.98 0.01 145);
+  --card: oklch(0.16 0.02 145 / 0.8);
+  --card-foreground: oklch(0.98 0.01 145);
+  --popover: oklch(0.14 0.02 145 / 0.95);
+  --popover-foreground: oklch(0.98 0.01 145);
 
-  --primary: oklch(0.55 0.2 25);
+  --primary: oklch(0.6 0.14 145);
   --primary-foreground: oklch(0.99 0 0);
 
-  --accent: oklch(0.7 0.22 45);
-  --accent-foreground: oklch(0.1 0.02 30);
+  --accent: oklch(0.6 0.1 175);
+  --accent-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.2 0.02 30);
-  --secondary-foreground: oklch(0.98 0.01 30);
-  --muted: oklch(0.22 0.02 30);
-  --muted-foreground: oklch(0.6 0.01 30);
+  --secondary: oklch(0.22 0.02 145);
+  --secondary-foreground: oklch(0.98 0.01 145);
+  --muted: oklch(0.24 0.02 145);
+  --muted-foreground: oklch(0.6 0.02 145);
 
-  --border: oklch(0.3 0.02 30 / 0.3);
-  --input: oklch(0.3 0.02 30 / 0.5);
-  --glass-bg: oklch(0.13 0.02 30 / 0.3);
+  --border: oklch(0.3 0.02 145 / 0.3);
+  --input: oklch(0.3 0.02 145 / 0.5);
+  --glass-bg: oklch(0.16 0.02 145 / 0.3);
   --glass-border: oklch(1 0 0 / 0.1);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --chart-1: oklch(0.6 0.14 145);
+  --chart-2: oklch(0.6 0.1 175);
+  --chart-3: oklch(0.65 0.15 85);
+  --chart-4: oklch(0.7 0.12 200);
+  --chart-5: oklch(0.6 0.1 280);
+  --sidebar: oklch(0.18 0.02 145);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.6 0.14 145);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.25 0.02 145);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar-border: oklch(0.28 0.02 145);
+  --sidebar-ring: oklch(0.52 0.14 145);
 }
 
 @theme inline {
-  /* State Farm uses clean sans-serif typography */
+  /* SowSmart uses clean, friendly typography */
   --font-sans: "Inter", "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-heading: "Inter", "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
