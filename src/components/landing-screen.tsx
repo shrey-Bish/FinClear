@@ -21,7 +21,7 @@ import { Card } from "@/components/ui/card"
 
 export default function LandingScreen({ onStart, onViewInsights, quizCompleted, onDemo }: any) {
   const [modal, setModal] = useState<"login" | "signup" | null>(null)
-  const handleFakeSubmit = () => setTimeout(() => setModal(null), 1200)
+  const [greetingName, setGreetingName] = useState<string | null>(null);
 
   const SPOTLIGHTS = [
     { stat: "92%", label: "feel more confident after onboarding", Icon: Stars },
@@ -101,32 +101,44 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              🌱 Plant Good Financial Habits Early
+              {greetingName ? "🌱 Welcome to SowSmart" : "🌱 Plant Good Financial Habits Early"}
             </motion.p>
             <h1 className="mt-2 text-4xl font-semibold leading-tight text-[#1A1A1A] sm:text-5xl">
-              Grow your financial future with confidence.
+              {greetingName ? `Hello ${greetingName}!` : "Grow your financial future with confidence."}
             </h1>
             <p className="mt-3 max-w-lg text-base text-[#4B5563] sm:text-lg">
-              Get personalized guidance on insurance, savings, and emergency planning tailored to your life and goals.
+              {greetingName 
+                ? "Let's align on your financial goals. I'll ask a few quick questions in a short voice interview so we can build your personalized roadmap." 
+                : "Get personalized guidance on insurance, savings, and emergency planning tailored to your life and goals."}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button
                 size="lg"
                 className="w-full rounded-full bg-[#2E7D32] py-6 text-base font-semibold text-white shadow-lg shadow-[#2E7D32]/25 hover:bg-[#1B5E20] sm:w-auto sm:px-10"
-                onClick={quizCompleted ? onViewInsights ?? onStart : onStart}
+                onClick={() => {
+                   if (greetingName) {
+                       onStart(greetingName);
+                   } else if (quizCompleted) {
+                       onViewInsights ?? onStart();
+                   } else {
+                       onStart();
+                   }
+                }}
               >
-                {quizCompleted ? "Open insights" : "Start growing"}
+                {greetingName ? "Start Voice Interview" : quizCompleted ? "Open insights" : "Start growing"}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={onDemo ?? onStart}
-                className="w-full rounded-full border-[#C8E6C9] bg-white py-6 text-base font-semibold text-[#2E7D32] hover:bg-[#E8F5E9] sm:w-auto sm:px-8"
-              >
-                <Sparkles className="mr-2 h-5 w-5" /> Try 2-min demo
-              </Button>
+              {!greetingName && (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={onDemo ?? onStart}
+                  className="w-full rounded-full border-[#C8E6C9] bg-white py-6 text-base font-semibold text-[#2E7D32] hover:bg-[#E8F5E9] sm:w-auto sm:px-8"
+                >
+                  <Sparkles className="mr-2 h-5 w-5" /> Try 2-min demo
+                </Button>
+              )}
             </div>
           </div>
 
@@ -285,29 +297,31 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
             const password = (form.querySelector('input[type="password"]') as HTMLInputElement)?.value
 
             if (modal === "login") {
+              // Just capture any string as name for login to demonstrate greeting
+              const extractedName = email.split('@')[0] || "Friend"
+              
               if (email === "demo@sowsmart.com" && password === "demo123") {
                 setInvalid(false)
                 setModal(null)
-                // Navigate to quiz/insights based on what's available
-                setTimeout(() => {
-                  if (onViewInsights) {
-                    onViewInsights()
-                  } else if (onStart) {
-                    onStart()
-                  }
-                }, 300)
+                // If quiz completed demo, go to insights. Otherwise, show greeting demo.
+                if (quizCompleted && onViewInsights) {
+                  onViewInsights();
+                } else {
+                  setGreetingName("Demo User");
+                }
+              } else if (email && password) {
+                 setInvalid(false);
+                 setModal(null);
+                 setGreetingName(extractedName);
               } else {
                 setInvalid(true)
               }
             } else {
-              // Signup: close modal and start the app
+              // Signup
+              const nameInput = (form.querySelector('input[type="text"]') as HTMLInputElement)?.value
               setInvalid(false)
               setModal(null)
-              setTimeout(() => {
-                if (onStart) {
-                  onStart()
-                }
-              }, 300)
+              setGreetingName(nameInput || "Friend");
             }
           }}
           className="flex flex-col gap-3"

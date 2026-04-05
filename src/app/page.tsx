@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion"
 
 import { BottomNav } from "@/components/bottom-nav"
 import { ChatModal } from "@/components/chat-modal"
-import { DynamicQuiz } from "@/components/DynamicQuiz"
+import { VoiceInterview } from "@/components/voice-interview"
 import { UploadScreen } from "@/components/upload-screen"
 import { InsightsDashboard } from "@/components/insights-dashboard"
 import LandingScreen from "@/components/landing-screen"
@@ -143,19 +143,22 @@ export default function Home() {
   const assignUserId = () =>
     (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `user-${Date.now()}`)
 
-  const handleStart = () => {
+  const handleStart = (name?: string) => {
     const base = formData
       ? {
           ...formData,
+          fullName: name || formData.fullName,
+          preferredName: name || formData.preferredName,
           userId: formData.userId ?? assignUserId(),
           createdAt: new Date().toISOString(),
         }
       : {
           ...createFreshForm(),
+          fullName: name || "",
           userId: assignUserId(),
         }
     const prepared = withDerivedMetrics(base)
-    ensureUserSession(prepared.preferredName || prepared.fullName || "Guest")
+    ensureUserSession(name || prepared.preferredName || prepared.fullName || "Guest")
     setFormData(prepared)
     setHasCompletedQuiz(false)
     navigateTo("quiz")
@@ -408,10 +411,8 @@ export default function Home() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.3 }}
           >
-            <DynamicQuiz
+            <VoiceInterview
               initialData={formData}
-              onBack={() => setCurrentScreen("landing")}
-              onUpdate={handleQuizUpdate}
               onComplete={handleQuizComplete}
             />
           </motion.div>
