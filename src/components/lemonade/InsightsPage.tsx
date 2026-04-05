@@ -182,8 +182,8 @@ export function InsightsPage({ userData, onBack, onChat, onAgentConnect }: Insig
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <motion.div className="text-center mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h2 className="text-3xl font-medium text-gray-800 mb-2">Here's your plan, {firstName}! 🎉</h2>
-          <p className="text-gray-500">Based on your answers, here's what State Farm recommends.</p>
+          <h2 className="text-3xl font-medium text-gray-800 mb-2">Here&apos;s your plan, {firstName}! 🎉</h2>
+          <p className="text-gray-500">Based on your answers, here&apos;s what State Farm recommends.</p>
         </motion.div>
 
         {/* Emergency Score */}
@@ -286,7 +286,7 @@ export function InsightsPage({ userData, onBack, onChat, onAgentConnect }: Insig
         {/* Bundle savings */}
         {selectedPlans.length > 1 && (
           <motion.div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-            <p className="text-sm text-green-800">🎉 <strong>State Farm Bundle Discount!</strong> You're saving 15% by bundling {selectedPlans.length} policies</p>
+            <p className="text-sm text-green-800">🎉 <strong>State Farm Bundle Discount!</strong> You&apos;re saving 15% by bundling {selectedPlans.length} policies</p>
           </motion.div>
         )}
 

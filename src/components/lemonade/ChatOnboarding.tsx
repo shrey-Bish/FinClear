@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, HelpCircle, Volume2, VolumeX, Mic, MessageSquare } from "lucide-react"
 import { 
@@ -45,12 +45,13 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   const [voiceMode, setVoiceMode] = useState(false)
   const [modeSelected, setModeSelected] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messageIdRef = useRef(0)
 
   // Convert config questions to chat messages
-  const questionToMessage = (q: Question, data: Record<string, string>): Message => {
+  const questionToMessage = (q: Question, data: Record<string, string>, useVoice = voiceMode): Message => {
     const content = questionIndex === 0 
-      ? `${MAYA_INTRO.text}\n\n${getQuestionContent(q, data, voiceMode)}`
-      : getQuestionContent(q, data, voiceMode)
+      ? `${MAYA_INTRO.text}\n\n${getQuestionContent(q, data, useVoice)}`
+      : getQuestionContent(q, data, useVoice)
     
     return {
       id: q.id,
@@ -79,19 +80,7 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
     }
   }, [])
 
-  // Start with mode selection
-  useEffect(() => {
-    if (!modeSelected) return
-    const timer = setTimeout(() => {
-      const filteredQs = getFilteredQuestions()
-      if (filteredQs.length > 0) {
-        addAiMessage(questionToMessage(filteredQs[0], userData))
-      }
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [modeSelected])
-
-  const addAiMessage = (message: Message) => {
+  const addAiMessage = useCallback((message: Message) => {
     setIsTyping(true)
     
     const delay = voiceMode ? 1200 : 800 // Longer delay for voice mode feel
@@ -105,11 +94,11 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
         void speakSowSmartText(prepareVoiceText(message.content))
       }
     }, delay)
-  }
+  }, [voiceMode])
 
   const addUserMessage = (content: string) => {
     const newMessage: Message = {
-      id: `user-${Date.now()}`,
+      id: `user-${messageIdRef.current += 1}`,
       type: "user",
       content,
     }
@@ -221,9 +210,17 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   }
 
   const handleModeSelect = (mode: "text" | "voice") => {
-    setVoiceMode(mode === "voice")
+    const nextVoiceMode = mode === "voice"
+    setVoiceMode(nextVoiceMode)
     setModeSelected(true)
     setCurrentStep(1)
+
+    setTimeout(() => {
+      const filteredQs = getFilteredQuestionsFromConfig(userData)
+      if (filteredQs.length > 0) {
+        addAiMessage(questionToMessage(filteredQs[0], userData, nextVoiceMode))
+      }
+    }, 500)
   }
 
   // Mode selection screen
@@ -260,7 +257,7 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            Hey there! I'm Maya 👋
+            Hey there! I&apos;m Maya 👋
           </motion.h1>
           
           <motion.p 
@@ -319,7 +316,7 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
           >
-            Don't worry — you can switch modes anytime
+            Don&apos;t worry — you can switch modes anytime
           </motion.p>
         </main>
       </div>

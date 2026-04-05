@@ -321,12 +321,6 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
     })
   }, [])
 
-  useEffect(() => {
-    if (!isOpen) {
-      handleDisconnect()
-    }
-  }, [handleDisconnect, isOpen])
-
   if (!isOpen) return null
 
   const isActive = isConnected

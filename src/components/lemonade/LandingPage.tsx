@@ -166,7 +166,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
           >
             We use AI to craft the perfect policy for you, and to pay out claims.
             <br />
-            It couldn't be easier or faster.
+            It couldn&apos;t be easier or faster.
           </motion.p>
           
           <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -328,7 +328,7 @@ export function LandingPage({ onStart, onStartVoice, onLogin }: LandingPageProps
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
-            2 minutes. That's all it takes to find out what coverage you need.
+            2 minutes. That&apos;s all it takes to find out what coverage you need.
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row items-center justify-center gap-4"

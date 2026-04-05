@@ -36,13 +36,15 @@ export default function Home() {
     const savedUserData = readStorage<Record<string, any>>(USER_DATA_KEY, {})
     const onboardingComplete = readStorage<boolean>(ONBOARDING_COMPLETE_KEY, false)
 
-    if (savedUserData && Object.keys(savedUserData).length > 0) {
-      setUserData(savedUserData)
-    }
+    queueMicrotask(() => {
+      if (savedUserData && Object.keys(savedUserData).length > 0) {
+        setUserData(savedUserData)
+      }
 
-    if (onboardingComplete) {
-      setCurrentScreen("insights")
-    }
+      if (onboardingComplete) {
+        setCurrentScreen("insights")
+      }
+    })
   }, [isHydrated])
 
   // Save user data when it changes
