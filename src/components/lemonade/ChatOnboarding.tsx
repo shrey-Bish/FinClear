@@ -2,10 +2,10 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { signIn } from "next-auth/react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ChevronLeft, HelpCircle, MessageSquare, RotateCcw, Volume2, VolumeX } from "lucide-react"
+import { ChevronLeft, HelpCircle, Minus, Plus, RotateCcw, Volume2, VolumeX, ZoomIn, Eye, X, MessageSquare, Settings } from "lucide-react"
 
+import { createClient } from "@/lib/supabase/client"
 import {
   COMPLETION_MESSAGE,
   GUIDE_INTRO,
@@ -45,8 +45,32 @@ function deriveProgress(questionIndex: number, isSignupStep: boolean) {
   return 1
 }
 
+// Accessibility: Simplify text for better understanding
+function simplifyText(text: string): string {
+  const simplifications: Record<string, string> = {
+    "coverage": "protection",
+    "premium": "monthly payment",
+    "deductible": "amount you pay before insurance kicks in",
+    "liability": "responsibility for damages",
+    "comprehensive": "covers most situations",
+    "collision": "car accident damage",
+    "policy": "insurance plan",
+    "beneficiary": "person who receives money",
+    "claim": "request for payment",
+    "underwriting": "approval process",
+  }
+  
+  let simplified = text
+  for (const [term, explanation] of Object.entries(simplifications)) {
+    const regex = new RegExp(`\\b${term}\\b`, 'gi')
+    simplified = simplified.replace(regex, `${term} (${explanation})`)
+  }
+  return simplified
+}
+
 export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   const router = useRouter()
+  const supabase = createClient()
 
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
@@ -62,9 +86,40 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   const [password, setPassword] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  
+  // Accessibility states
+  const [fontSize, setFontSize] = useState<"normal" | "large" | "xl">("normal")
+  const [highContrast, setHighContrast] = useState(false)
+  const [showAccessibilityMenu, setShowAccessibilityMenu] = useState(false)
+  const [explainedText, setExplainedText] = useState<string | null>(null)
+  const [lastTapTime, setLastTapTime] = useState(0)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messageIdRef = useRef(0)
+  
+  // Handle double-tap on message to explain
+  const handleMessageTap = useCallback((content: string) => {
+    const now = Date.now()
+    if (now - lastTapTime < 400) {
+      // Double tap detected - show simplified explanation
+      setExplainedText(simplifyText(content))
+    }
+    setLastTapTime(now)
+  }, [lastTapTime])
+
+  const fontSizeClasses = {
+    normal: "text-base",
+    large: "text-lg",
+    xl: "text-xl"
+  }
+
+  const increaseFontSize = () => {
+    setFontSize(prev => prev === "normal" ? "large" : prev === "large" ? "xl" : "xl")
+  }
+
+  const decreaseFontSize = () => {
+    setFontSize(prev => prev === "xl" ? "large" : prev === "large" ? "normal" : "normal")
+  }
 
   const filteredQuestions = useMemo(
     () => getFilteredQuestionsFromConfig(userData),
@@ -236,58 +291,56 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
     setAuthError(null)
 
     const normalizedEmail = email.trim().toLowerCase()
-    if (!normalizedEmail || password.trim().length < 8) {
-      setAuthError("Please provide a valid email and a password with at least 8 characters.")
+    if (!normalizedEmail || password.trim().length < 6) {
+      setAuthError("Please provide a valid email and a password with at least 6 characters.")
       return
     }
 
     const answersPayload = { ...userData, voiceMode }
     setIsSubmitting(true)
 
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: normalizedEmail,
-        password,
-        name: userData.firstName || normalizedEmail,
-        answers: answersPayload,
-      }),
-    })
-
-    if (response.status === 409) {
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem(
-          PENDING_SIGNUP_KEY,
-          JSON.stringify({ email: normalizedEmail, data: answersPayload })
-        )
-      }
-      router.push(`/login?email=${encodeURIComponent(normalizedEmail)}&callbackUrl=%2Frecommendations`)
-      return
-    }
-
-    if (!response.ok) {
-      const payload = (await response.json().catch(() => ({}))) as { error?: string }
-      setIsSubmitting(false)
-      setAuthError(payload.error || "Unable to create account. Try again.")
-      return
-    }
-
-    const loginResult = await signIn("credentials", {
+    // Sign up with Supabase
+    const { error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
-      redirect: false,
+      options: {
+        data: {
+          full_name: userData.firstName || normalizedEmail,
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/recommendations`,
+      },
     })
 
-    setIsSubmitting(false)
-
-    if (!loginResult?.ok) {
-      setAuthError("Account created, but login failed. Please go to Login.")
-      router.push(`/login?email=${encodeURIComponent(normalizedEmail)}&callbackUrl=%2Frecommendations`)
+    if (error) {
+      setIsSubmitting(false)
+      if (error.message.includes("already registered")) {
+        // User exists, redirect to login
+        if (typeof window !== "undefined") {
+          window.sessionStorage.setItem(
+            PENDING_SIGNUP_KEY,
+            JSON.stringify({ email: normalizedEmail, data: answersPayload })
+          )
+        }
+        router.push(`/login?email=${encodeURIComponent(normalizedEmail)}&callbackUrl=%2Frecommendations`)
+        return
+      }
+      setAuthError(error.message)
       return
     }
 
+    // Store answers for later sync
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(
+        PENDING_SIGNUP_KEY,
+        JSON.stringify({ email: normalizedEmail, data: answersPayload })
+      )
+    }
+
+    setIsSubmitting(false)
     onComplete(answersPayload)
+    
+    // For email confirmation flow, show a message
+    alert("Check your email for a confirmation link! You can also sign in with Google to skip confirmation.")
     router.push("/recommendations")
   }
 
@@ -298,7 +351,13 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
         JSON.stringify({ email: email.trim().toLowerCase(), data: { ...userData, voiceMode } })
       )
     }
-    await signIn("google", { callbackUrl: "/recommendations" })
+    
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/recommendations`,
+      },
+    })
   }
 
   useEffect(() => {
@@ -310,6 +369,22 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
       stopSowSmartVoice()
     }
   }, [])
+
+  // Auto-start with text mode (no mode selection screen) - run only once on mount
+  useEffect(() => {
+    if (!modeSelected && messages.length === 0) {
+      setModeSelected(true)
+      const initialQuestions = getFilteredQuestionsFromConfig({})
+      const firstQuestion = initialQuestions[0]
+      if (firstQuestion) {
+        // Delay slightly to avoid React strict mode double-call
+        const timer = setTimeout(() => {
+          addAiMessage(questionToMessage(firstQuestion, {}, false))
+        }, 100)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, []) // Empty deps - only run on mount
 
   if (!modeSelected) {
     return (
@@ -391,10 +466,10 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-          <ChevronLeft className="w-5 h-5 text-gray-600" />
+    <div className={`min-h-screen flex flex-col transition-colors ${highContrast ? "bg-black" : "bg-white"}`}>
+      <header className={`flex items-center justify-between px-4 py-3 border-b ${highContrast ? "border-white bg-black" : "border-gray-100"}`}>
+        <button onClick={onBack} className={`p-2 rounded-full transition-colors ${highContrast ? "hover:bg-gray-800 text-white" : "hover:bg-gray-100"}`}>
+          <ChevronLeft className={`w-5 h-5 ${highContrast ? "text-white" : "text-gray-600"}`} />
         </button>
 
         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center overflow-hidden">
@@ -404,25 +479,107 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setVoiceMode((prev) => !prev)}
-            className={`p-2 rounded-full transition-colors ${voiceMode ? "bg-pink-100 text-[#FF0080]" : "hover:bg-gray-100 text-gray-400"}`}
+            className={`p-2 rounded-full transition-colors ${voiceMode ? "bg-pink-100 text-[#FF0080]" : highContrast ? "hover:bg-gray-800 text-white" : "hover:bg-gray-100 text-gray-400"}`}
             title={voiceMode ? "Voice mode on" : "Voice mode off"}
           >
             {voiceMode ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
           </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowAccessibilityMenu(prev => !prev)}
+              className={`p-2 rounded-full transition-colors ${showAccessibilityMenu ? "bg-green-100 text-green-600" : "hover:bg-gray-100 text-gray-400"}`}
+              title="Accessibility options"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+            
+            {/* Accessibility Menu Dropdown */}
+            <AnimatePresence>
+              {showAccessibilityMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  className="absolute right-0 top-12 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium text-gray-800 flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-green-600" />
+                      Accessibility
+                    </h3>
+                    <button 
+                      onClick={() => setShowAccessibilityMenu(false)}
+                      className="p-1 hover:bg-gray-100 rounded-full"
+                    >
+                      <X className="w-4 h-4 text-gray-400" />
+                    </button>
+                  </div>
+                  
+                  {/* Font Size Controls */}
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Text Size</p>
+                    <div className="flex items-center justify-between bg-gray-50 rounded-xl p-2">
+                      <button
+                        onClick={decreaseFontSize}
+                        disabled={fontSize === "normal"}
+                        className="p-2 hover:bg-white rounded-lg transition-colors disabled:opacity-40"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-sm font-medium text-gray-600 capitalize">{fontSize}</span>
+                      <button
+                        onClick={increaseFontSize}
+                        disabled={fontSize === "xl"}
+                        className="p-2 hover:bg-white rounded-lg transition-colors disabled:opacity-40"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* High Contrast Toggle */}
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">High Contrast</p>
+                    <button
+                      onClick={() => setHighContrast(prev => !prev)}
+                      className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${
+                        highContrast 
+                          ? "bg-gray-900 text-white border-gray-900" 
+                          : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <span className="text-sm font-medium">{highContrast ? "On" : "Off"}</span>
+                      <div className={`w-10 h-6 rounded-full transition-colors ${highContrast ? "bg-green-500" : "bg-gray-200"}`}>
+                        <div className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform mt-0.5 ${highContrast ? "translate-x-4.5 ml-0.5" : "translate-x-0.5"}`} />
+                      </div>
+                    </button>
+                  </div>
+                  
+                  {/* Double-tap hint */}
+                  <div className="pt-3 border-t border-gray-100">
+                    <p className="text-xs text-gray-400 flex items-center gap-2">
+                      <ZoomIn className="w-3 h-3" />
+                      Double-tap any message to simplify
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <HelpCircle className="w-5 h-5 text-gray-400" />
           </button>
         </div>
       </header>
 
-      <div className="px-6 py-4 border-b border-gray-50">
+      <div className={`px-6 py-4 border-b ${highContrast ? "border-gray-700 bg-black" : "border-gray-50"}`}>
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-2">
             {PROGRESS_STEPS.slice(1).map((step, index) => (
               <div key={step.id} className="flex items-center">
-                <div className={`w-3 h-3 rounded-full ${index + 1 <= currentStep ? "bg-[#FF0080]" : "bg-gray-200"}`} />
+                <div className={`w-3 h-3 rounded-full ${index + 1 <= currentStep ? (highContrast ? "bg-yellow-400" : "bg-[#FF0080]") : (highContrast ? "bg-gray-600" : "bg-gray-200")}`} />
                 {index < PROGRESS_STEPS.length - 2 && (
-                  <div className={`w-10 h-0.5 mx-2 ${index + 1 < currentStep ? "bg-[#FF0080]" : "bg-gray-200"}`} />
+                  <div className={`w-10 h-0.5 mx-2 ${index + 1 < currentStep ? (highContrast ? "bg-yellow-400" : "bg-[#FF0080]") : (highContrast ? "bg-gray-600" : "bg-gray-200")}`} />
                 )}
               </div>
             ))}
@@ -431,7 +588,11 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
           <button
             onClick={handlePreviousQuestion}
             disabled={answerHistory.length === 0 || isSubmitting}
-            className="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 disabled:opacity-40"
+            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium disabled:opacity-40 ${
+              highContrast 
+                ? "border-white text-white hover:bg-gray-800" 
+                : "border-gray-200 text-gray-600"
+            }`}
           >
             <RotateCcw className="w-3 h-3" />
             Previous
@@ -439,8 +600,8 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
-        <div className="max-w-lg mx-auto space-y-4 py-4">
+      <div className={`flex-1 overflow-y-auto px-4 pb-4 ${highContrast ? "bg-black" : ""}`}>
+        <div className={`max-w-lg mx-auto space-y-4 py-4 ${fontSizeClasses[fontSize]}`}>
           <AnimatePresence>
             {messages.map((message, index) => (
               <motion.div
@@ -459,7 +620,19 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
                 )}
 
                 <div className={`max-w-[80%] ${message.type === "user" ? "order-1" : ""}`}>
-                  <div className={`rounded-2xl px-4 py-3 ${message.type === "user" ? "bg-[#FF0080] text-white rounded-tr-md" : "text-gray-800"}`}>
+                  <div 
+                    onClick={() => message.type === "ai" && handleMessageTap(message.content)}
+                    className={`rounded-2xl px-4 py-3 cursor-pointer transition-all ${
+                      message.type === "user" 
+                        ? highContrast 
+                          ? "bg-yellow-400 text-black rounded-tr-md font-bold" 
+                          : "bg-[#FF0080] text-white rounded-tr-md" 
+                        : highContrast 
+                          ? "bg-white text-black border-2 border-white font-semibold" 
+                          : "text-gray-800"
+                    } ${message.type === "ai" ? "hover:bg-gray-50 active:bg-gray-100" : ""}`}
+                    title={message.type === "ai" ? "Double-tap to simplify" : ""}
+                  >
                     <p className="whitespace-pre-line">{message.content}</p>
                   </div>
 
@@ -590,6 +763,58 @@ export function ChatOnboarding({ onComplete, onBack }: ChatOnboardingProps) {
           </div>
         </div>
       )}
+      
+      {/* Explanation Modal */}
+      <AnimatePresence>
+        {explainedText && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4"
+            onClick={() => setExplainedText(null)}
+          >
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                    <ZoomIn className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-800">Simplified Explanation</h3>
+                    <p className="text-xs text-gray-500">Insurance terms made easy</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setExplainedText(null)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+              
+              <div className={`bg-green-50 rounded-2xl p-4 ${fontSizeClasses[fontSize]}`}>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{explainedText}</p>
+              </div>
+              
+              <div className="mt-4 flex items-center gap-3 text-xs text-gray-400">
+                <span className="flex items-center gap-1">
+                  <Eye className="w-3 h-3" />
+                  Accessibility feature
+                </span>
+                <span>•</span>
+                <span>Tap outside to close</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

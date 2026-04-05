@@ -12,6 +12,8 @@ import {
   Volume2,
   VolumeX,
   X,
+  Captions,
+  Eye,
 } from "lucide-react"
 
 import {
@@ -51,6 +53,8 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
   const [isConnected, setIsConnected] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [showCaptions, setShowCaptions] = useState(true)
+  const [currentCaption, setCurrentCaption] = useState("")
 
   const recognitionRef = useRef<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -106,14 +110,17 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
     const prompt = prepareVoiceText(text)
     setMessages((previous) => [...previous, { role: "ai", text: prompt }])
     setAgentState("speaking")
+    setCurrentCaption(prompt)
 
     if (isMutedRef.current) {
       await sleep(650)
+      setCurrentCaption("")
       return
     }
 
     const playback = await speakSowSmartText(prompt)
     await playback.finished
+    setCurrentCaption("")
   }, [])
 
   const finishConversation = useCallback(
@@ -479,6 +486,24 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                       <p className="mt-1 text-sm leading-6 text-[#1A1A1A]">{transcript}</p>
                     </div>
                   )}
+                  
+                  {/* Live Captions Display */}
+                  <AnimatePresence>
+                    {showCaptions && currentCaption && agentState === "speaking" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="mt-4 rounded-2xl bg-gray-900 px-4 py-3"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <Captions className="h-4 w-4 text-white" />
+                          <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/70">Live Caption</p>
+                        </div>
+                        <p className="text-sm leading-6 text-white">{currentCaption}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
             </div>
@@ -503,7 +528,7 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-4 gap-3">
                   <button
                     onClick={toggleMute}
                     className={`flex flex-col items-center justify-center rounded-2xl border px-3 py-4 text-sm transition-colors ${
@@ -514,6 +539,19 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                   >
                     {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                     <span className="mt-2 text-xs font-medium">{isMuted ? "Unmute" : "Mute"}</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowCaptions(prev => !prev)}
+                    className={`flex flex-col items-center justify-center rounded-2xl border px-3 py-4 text-sm transition-colors ${
+                      showCaptions
+                        ? "border-[#C8E6C9] bg-[#E8F5E9] text-[#2E7D32]"
+                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                    }`}
+                    title="Toggle live captions"
+                  >
+                    <Captions className="h-5 w-5" />
+                    <span className="mt-2 text-xs font-medium">Captions</span>
                   </button>
 
                   <button
@@ -536,6 +574,17 @@ export function VoiceAgent({ isOpen, onClose, onComplete }: VoiceAgentProps) {
                     {agentState === "listening" ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
                     <span className="mt-2 text-xs font-medium">{agentState === "listening" ? "Listening" : "Mic"}</span>
                   </button>
+                </div>
+                
+                {/* Accessibility Features Card */}
+                <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Eye className="h-4 w-4 text-green-600" />
+                    <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">Accessibility</span>
+                  </div>
+                  <p className="text-xs text-green-600">
+                    {showCaptions ? "Live captions enabled" : "Captions off"} • Voice-first navigation • Clear visual feedback
+                  </p>
                 </div>
               </div>
 

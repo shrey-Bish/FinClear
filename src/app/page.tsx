@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { LandingPage, ChatOnboarding, InsightsPage } from "@/components/lemonade"
 import { ChatModal } from "@/components/chat-modal"
@@ -21,13 +21,27 @@ type ScreenKey = "landing" | "onboarding" | "insights"
 const USER_DATA_KEY = "sowsmart_user_data"
 const LEGACY_ONBOARDING_COMPLETE_KEY = "sowsmart_onboarding_complete"
 
-export default function Home() {
+function HomeContent() {
   const { login } = useUser()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [currentScreen, setCurrentScreen] = useState<ScreenKey>("landing")
   const [userData, setUserData] = useState<Record<string, any>>({})
   const [showChat, setShowChat] = useState(false)
   const isHydrated = useHydrated()
+
+  // Check if this is a new user redirect from recommendations page
+  useEffect(() => {
+    if (!isHydrated) return
+    
+    const isNewUser = searchParams.get("newUser") === "true"
+    if (isNewUser) {
+      // New authenticated user without profile - start onboarding
+      setCurrentScreen("onboarding")
+      // Clean up the URL parameter
+      router.replace("/", { scroll: false })
+    }
+  }, [isHydrated, searchParams, router])
 
   // Load saved data on mount
   useEffect(() => {
@@ -188,5 +202,28 @@ export default function Home() {
         userId={userData.firstName || "guest"}
       />
     </>
+  )
+}
+
+function HomeFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="text-center">
+        <div className="font-script text-3xl text-gray-800 mb-4">SowSmart</div>
+        <div className="flex gap-1 justify-center">
+          <span className="w-2 h-2 bg-[#FF0080] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-2 h-2 bg-[#FF0080] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-2 h-2 bg-[#FF0080] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<HomeFallback />}>
+      <HomeContent />
+    </Suspense>
   )
 }
