@@ -229,7 +229,6 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
       </div>
 
       {/* === LOGIN / SIGNUP MODAL === */}
-      /* === LOGIN / SIGNUP MODAL === */
 <AnimatePresence>
   {modal && (
     <motion.div

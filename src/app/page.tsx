@@ -351,7 +351,7 @@ export default function Home() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F7F4F2] text-[#A41E34]">
         <div className="text-center">
-          <div className="mb-4 text-2xl font-semibold">LifeLens</div>
+          <div className="mb-4 text-2xl font-semibold text-[#E31837]">FinMate</div>
           <div className="text-sm">Preparing your financial guidance...</div>
         </div>
       </div>
@@ -413,6 +413,7 @@ export default function Home() {
               onSendReport={handleSendReport}
               loading={isGenerating}
               usingPlaceholder={usingPlaceholder}
+              formData={formData}
             />
           </motion.div>
         )}
