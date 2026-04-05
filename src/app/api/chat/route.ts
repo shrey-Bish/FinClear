@@ -19,7 +19,7 @@ type ChatRequest = {
 type ChatOK = { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string }
 type ChatERR = { error: string; detail?: unknown; status?: number }
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-pro"
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash-latest"
 
 // System prompt for financial wellness assistant
 const SYSTEM_PROMPT = `You are FinMate, a friendly and knowledgeable financial wellness assistant powered by State Farm. Your role is to help users understand insurance, benefits, and financial planning in simple, clear terms.
