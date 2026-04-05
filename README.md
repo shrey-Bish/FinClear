@@ -135,30 +135,51 @@ See full setup instructions in [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md)
 ## 📱 Features Walkthrough
 
 ### 1. Landing Page
-- Clean, Lemonade-inspired design
+![Landing Page](public/screenshots/landing-page.png)
+*Clean, Lemonade-inspired design with single CTA and Gen Z-friendly language*
+
+- Elegant serif italic typography
+- Subtle line-art illustrations
 - Single CTA: "CHECK OUR PRICES"
-- Subtle voice mode option
-- Gen Z-friendly copy
+- Voice mode option for accessibility
 
-### 2. Chat Onboarding
-- Meet Nova, your AI guide
-- Answer ~7 conversational questions
-- No traditional forms
+### 2. Product Features
+![Features Overview](public/screenshots/features.png)
+*AI-powered coverage with Gen Z casual tone*
+
+- 90-second onboarding process
+- 3-minute claims processing
+- Bundle discounts for multiple policies
+- Coverage for renters, auto, life, and health
+
+### 3. Chat Onboarding
+![Chat Onboarding](public/screenshots/chat-onboarding.png)
+*Meet Nova - your friendly AI insurance guide*
+
+- Conversational UI (no boring forms!)
+- ~7 simple questions
+- Real-time progress tracking
 - Instant feedback and validation
-- Voice mode toggle available
 
-### 3. AI Recommendations
-- Personalized coverage suggestions
-- Plain English explanations
+### 4. AI Recommendations
+![Recommendations Page](public/screenshots/recommendations.png)
+*Personalized coverage suggestions with plain English explanations*
+
+- Coverage tailored to your profile
+- "Why this works for you" breakdowns
 - Voice playback for each section
 - Interactive Q&A chat
-- See what peers chose
+- What peers are choosing
 
-### 4. Accessibility Features
-- **Settings menu** with font size controls
-- **High contrast mode** for visibility
-- **Double-tap messages** to get simplified explanations
-- **Voice mode** throughout the app
+### 5. Voice Mode & Accessibility
+![Voice Mode](public/screenshots/voice-mode.png)
+*Full voice navigation with ElevenLabs AI synthesis*
+
+- Talk to Nova instead of typing
+- Live captions for all interactions
+- Mic input with auto-advance
+- Mute, captions, and mic controls
+- Clear visual feedback
 
 ## 🎥 Demo Flow
 
