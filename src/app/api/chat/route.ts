@@ -16,12 +16,59 @@ type ChatRequest = {
     riskTolerance?: number
   }
 }
-type ChatOK = { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string }
+type ChatOK = { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string; suggestions?: string[] }
 type ChatERR = { error: string; detail?: unknown; status?: number }
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash"
 
-// System prompt for financial wellness assistant
+// Generate follow-up suggestions based on the conversation
+function generateSuggestions(prompt: string, response: string): string[] {
+  const promptLower = prompt.toLowerCase()
+  
+  // Topic-specific suggestions
+  if (promptLower.includes("deductible") || promptLower.includes("premium")) {
+    return [
+      "What's the right deductible for my income?",
+      "How do HSA accounts help with health costs?",
+      "Should I choose HMO or PPO?"
+    ]
+  }
+  if (promptLower.includes("emergency") || promptLower.includes("savings")) {
+    return [
+      "How much should I save each month?",
+      "What's the 50/30/20 budgeting rule?",
+      "How do I start an emergency fund?"
+    ]
+  }
+  if (promptLower.includes("insurance") || promptLower.includes("coverage")) {
+    return [
+      "What types of insurance do I need?",
+      "How does life insurance work?",
+      "What is renters insurance?"
+    ]
+  }
+  if (promptLower.includes("retirement") || promptLower.includes("401k") || promptLower.includes("ira")) {
+    return [
+      "What's the difference between 401k and IRA?",
+      "How much should I save for retirement?",
+      "Should I do Roth or Traditional?"
+    ]
+  }
+  if (promptLower.includes("health") || promptLower.includes("medical")) {
+    return [
+      "What's the difference between HMO and PPO?",
+      "How do I choose the right health plan?",
+      "What is an HSA and should I get one?"
+    ]
+  }
+  
+  // Default suggestions for general queries
+  return [
+    "Help me understand my insurance options",
+    "How do I build an emergency fund?",
+    "What benefits should I prioritize?"
+  ]
+}
 const SYSTEM_PROMPT = `You are SowSmart, a friendly and knowledgeable financial wellness assistant powered by State Farm. Your role is to help users understand insurance, benefits, and financial planning in simple, clear terms.
 
 GUIDELINES:
@@ -99,10 +146,12 @@ async function callGemini(userPrompt: string, userProfile?: ChatRequest["userPro
       throw { error: "Gemini returned empty response", status: 500 } as ChatERR
     }
 
+    const responseText = text.trim()
     return {
-      message: text.trim(),
+      message: responseText,
       provider: "gemini",
-      sources: sources.length > 0 ? sources : undefined
+      sources: sources.length > 0 ? sources : undefined,
+      suggestions: generateSuggestions(userPrompt, responseText)
     }
   } catch (err: unknown) {
     const error = err as { message?: string; status?: number }
@@ -123,7 +172,8 @@ function getFallbackResponse(prompt: string): ChatOK {
       message: `Based on our knowledge base:\n\n**${doc.title}**\n\n${doc.content}\n\n---\n*For personalized advice, please speak with a State Farm agent.*`,
       provider: "gemini-fallback",
       sources: [doc.title],
-      note: "AI temporarily unavailable - showing relevant knowledge base content"
+      note: "AI temporarily unavailable - showing relevant knowledge base content",
+      suggestions: generateSuggestions(prompt, doc.content)
     }
   }
 
@@ -137,7 +187,12 @@ function getFallbackResponse(prompt: string): ChatOK {
 
 Please try asking your question again, or speak with a State Farm agent for immediate assistance.`,
     provider: "gemini-fallback",
-    note: "AI service temporarily unavailable"
+    note: "AI service temporarily unavailable",
+    suggestions: [
+      "What is a deductible?",
+      "How do I choose health insurance?",
+      "Help me understand 401(k)"
+    ]
   }
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpen, Clock, Upload, LayoutDashboard, MessageCircle, User } from "lucide-react"
+import { BookOpen, LayoutDashboard, User, Sprout } from "lucide-react"
 
 import type { ScreenKey } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -12,10 +12,9 @@ interface BottomNavProps {
 
 export function BottomNav({ currentScreen, onNavigate }: BottomNavProps) {
   const navItems = [
-    { id: "insights", icon: LayoutDashboard, label: "Insights" },
-    { id: "timeline", icon: Clock, label: "Timeline" },
+    { id: "insights", icon: LayoutDashboard, label: "Dashboard" },
     { id: "learn", icon: BookOpen, label: "Learn" },
-    { id: "upload", icon: Upload, label: "Upload" },
+    { id: "quiz", icon: Sprout, label: "Survey" },
     { id: "profile", icon: User, label: "Profile" },
   ]
 

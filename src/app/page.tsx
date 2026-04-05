@@ -89,7 +89,8 @@ export default function Home() {
       }
     } else {
       setHasCompletedQuiz(false)
-      setCurrentScreen("quiz")
+      // Keep landing page as default for new users
+      setCurrentScreen("landing")
     }
 
     const storedMoments = readStorage<SavedMoment[]>(MOMENTS_STORAGE_KEY, [])
@@ -98,6 +99,19 @@ export default function Home() {
     }
 
   }, [isHydrated])
+
+  // Helper to scroll to top when navigating
+  const scrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  // Navigation helper that scrolls to top
+  const navigateTo = (screen: ScreenKey) => {
+    setCurrentScreen(screen)
+    scrollToTop()
+  }
 
   useEffect(() => {
     if (!isHydrated) return
@@ -144,7 +158,12 @@ export default function Home() {
     ensureUserSession(prepared.preferredName || prepared.fullName || "Guest")
     setFormData(prepared)
     setHasCompletedQuiz(false)
-    setCurrentScreen("quiz")
+    navigateTo("quiz")
+  }
+
+  // Handler for retaking quiz / updating profile
+  const handleRecalculate = () => {
+    navigateTo("quiz")
   }
 
   const handleQuizUpdate = (data: EnrollmentFormData) => {
@@ -212,7 +231,7 @@ export default function Home() {
       }
     } finally {
       setIsGenerating(false)
-      setCurrentScreen("insights")
+      navigateTo("insights")
     }
   }
 
@@ -262,10 +281,10 @@ export default function Home() {
 
   const handleNavigate = (target: ScreenKey) => {
     if (target === "insights" && !insights) {
-      setCurrentScreen(formData ? "quiz" : "landing")
+      navigateTo(formData ? "quiz" : "landing")
       return
     }
-    setCurrentScreen(target)
+    navigateTo(target)
   }
 
   const handleClearAllData = () => {
@@ -280,7 +299,7 @@ export default function Home() {
     removeStorage(PROFILE_CREATED_KEY)
     const refreshedCreatedAt = new Date().toISOString()
     setProfileCreatedAt(refreshedCreatedAt)
-    setCurrentScreen("quiz")
+    navigateTo("quiz")
   }
 
   const profileSnapshot: ProfileSnapshot = useMemo(() => {
@@ -358,7 +377,7 @@ export default function Home() {
     )
   }
 
-  const navVisibleScreens: ScreenKey[] = ["insights", "timeline", "learn", "upload", "profile"]
+  const navVisibleScreens: ScreenKey[] = ["insights", "learn", "quiz", "profile"]
 
   return (
     <>
@@ -375,7 +394,7 @@ export default function Home() {
             <LandingScreen
               onStart={handleStart}
               hasExistingInsights={!!insights}
-              onViewInsights={() => setCurrentScreen("insights")}
+              onViewInsights={() => navigateTo("insights")}
               quizCompleted={hasCompletedQuiz}
             />
           </motion.div>
@@ -408,9 +427,10 @@ export default function Home() {
           >
             <InsightsDashboard
               insights={insights}
-              onBackToLanding={() => setCurrentScreen("landing")}
+              onBackToLanding={() => navigateTo("landing")}
               onRegenerate={handleRegenerate}
               onSendReport={handleSendReport}
+              onRecalculate={handleRecalculate}
               loading={isGenerating}
               usingPlaceholder={usingPlaceholder}
               formData={formData}

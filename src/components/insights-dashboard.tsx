@@ -15,6 +15,7 @@ interface InsightsDashboardProps {
   onBackToLanding: () => void
   onRegenerate: () => void
   onSendReport: () => void
+  onRecalculate?: () => void
   loading?: boolean
   usingPlaceholder?: boolean
   formData?: EnrollmentFormData | null
@@ -46,12 +47,29 @@ export function InsightsDashboard({
   onBackToLanding,
   onRegenerate,
   onSendReport,
+  onRecalculate,
   loading,
   usingPlaceholder = false,
   formData,
 }: InsightsDashboardProps) {
   const topPriority = insights.priorityBenefits[0]
   const [showHelp, setShowHelp] = useState(false)
+  
+  // Calculate risk score based on form data
+  const calculateRiskScore = () => {
+    if (!formData) return 50
+    let score = 50
+    // Higher dependents = higher risk
+    score += (formData.dependents ?? 0) * 10
+    // Higher income = lower risk
+    if (formData.incomeRange === '100-200k' || formData.incomeRange === '200k-plus') score -= 15
+    // Higher savings = lower risk
+    score -= (formData.savingsRate ?? 10) / 2
+    // Higher risk comfort = lower perceived risk concern
+    score -= ((formData.riskComfort ?? 3) - 3) * 5
+    return Math.max(10, Math.min(90, Math.round(score)))
+  }
+  const riskScore = calculateRiskScore()
 
   return (
     <div className="relative min-h-screen bg-[#F7F4F2] pb-32 text-[#2A1A1A]">
@@ -115,8 +133,19 @@ export function InsightsDashboard({
                   )}
                 </div>
               </div>
+              {onRecalculate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full border-[#2E7D32]/30 text-sm font-semibold text-[#2E7D32] hover:bg-[#E8F5E9]"
+                  onClick={onRecalculate}
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Update Profile
+                </Button>
+              )}
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
               {formData.age && (
                 <div className="rounded-xl bg-[#FAFAFA] p-3 text-center">
                   <div className="text-lg font-bold text-[#2A1A1A]">{formData.age}</div>
@@ -132,7 +161,7 @@ export function InsightsDashboard({
               </div>
               <div className="rounded-xl bg-[#FAFAFA] p-3 text-center">
                 <div className="text-lg font-bold text-[#2A1A1A]">
-                  {formData.incomeRange === "under-50k" ? "<$50k" : formData.incomeRange === "50-100k" ? "$50-100k" : formData.incomeRange === "100-200k" ? "$100-200k" : "$200k+"}
+                  {formData.incomeRange === "under-50k" ? "<$50k" : formData.incomeRange === "50-100k" ? "$50-100k" : formData.incomeRange === "100-200k" ? "$100-200k" : formData.incomeRange === "200k-plus" ? "$200k+" : "$—"}
                 </div>
                 <div className="text-xs text-[#6B7280]">Income</div>
               </div>
@@ -142,6 +171,30 @@ export function InsightsDashboard({
                   <span className="text-lg font-bold text-[#2A1A1A]">{formData.riskComfort}/5</span>
                 </div>
                 <div className="text-xs text-[#6B7280]">Risk Comfort</div>
+              </div>
+              {/* Risk Score Gauge */}
+              <div className="rounded-xl bg-[#FAFAFA] p-3 text-center col-span-2 sm:col-span-1">
+                <div className="relative mx-auto h-16 w-16">
+                  <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#E5E7EB"
+                      strokeWidth="3"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke={riskScore > 60 ? "#EF4444" : riskScore > 40 ? "#F59E0B" : "#2E7D32"}
+                      strokeWidth="3"
+                      strokeDasharray={`${riskScore}, 100`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-sm font-bold text-[#2A1A1A]">{riskScore}</span>
+                  </div>
+                </div>
+                <div className="text-xs text-[#6B7280] mt-1">Risk Score</div>
               </div>
             </div>
           </Card>

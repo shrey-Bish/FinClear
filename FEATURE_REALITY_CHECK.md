@@ -15,7 +15,7 @@ Map every expected feature from original plan to current reality.
 ### Landing Page
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|
-| 1.1 | App opens to landing page (not quiz) | ☐ | |
+| 1.1 | App opens to landing page (not quiz) | app opens to quiz page because there is no separate route for pages | |
 | 1.2 | Shows "SowSmart" branding with plant/growth icon | ☐ | |
 | 1.3 | Tagline: "Plant Good Financial Habits Early" | ☐ | |
 | 1.4 | Hero text: Financial wellness messaging | ☐ | |
@@ -24,7 +24,7 @@ Map every expected feature from original plan to current reality.
 | 1.7 | Stats section: 92%, <2min, 5k+ users | ☐ | Desktop only |
 | 1.8 | About section explaining SowSmart | ☐ | |
 | 1.9 | FAQ section with 5+ questions | ☐ | |
-| 1.10 | Login/Signup modals work | ☐ | Demo: demo@sowsmart.com / demo123 |
+| 1.10 | Login/Signup modals work | login works but does redirects to blank page, sign up does not do anything | Demo: demo@sowsmart.com / demo123 |
 | 1.11 | Footer: "Built for State Farm Hackathon" | ☐ | |
 | 1.12 | Disclaimer: "Educational tool, not advice" | ☐ | |
 | 1.13 | Green theme (#2E7D32), NO red State Farm colors | ☐ | |
@@ -113,7 +113,7 @@ Map every expected feature from original plan to current reality.
 |---|------------------|----------------|-------|
 | 3.1 | Clicking "Generate" shows loading state | ☐ | "Generating insights..." |
 | 3.2 | Loading takes <10 seconds | ☐ | |
-| 3.3 | Dashboard appears after generation | ☐ | |
+| 3.3 | Dashboard appears after generation | it is navigating to mid of page | |
 | 3.4 | Shows 3-5 personalized recommendations | ☐ | |
 | 3.5 | **REC 1:** Health plan recommendation | ☐ | Low vs high deductible based on risk |
 | 3.6 | **REC 2:** Retirement contribution % | ☐ | Based on income, age, goals |
@@ -142,7 +142,7 @@ Map every expected feature from original plan to current reality.
 | 3.25 | RAG retrieves relevant entries for queries | ☐ | Keyword matching works |
 
 **Expected Impact:** Intelligent, context-aware recommendations using financial knowledge
-
+Question : how is model behaving different on 3 options : chat assist only, step-by-step guidance, brief summaries
 ---
 
 ## 🟣 PHASE 4: Conversational Financial Assistant
@@ -170,10 +170,10 @@ Map every expected feature from original plan to current reality.
 | 4.14 | **TEST Q4:** "What's collision coverage?" | ☐ | Auto insurance specific |
 | 4.15 | **TEST Q5:** "How does HSA work?" | ☐ | Health savings account |
 | 4.16 | Responses use RAG context | ☐ | Check if KB entries are referenced |
-| 4.17 | Suggests 3 next questions | ☐ | "You might also want to ask..." |
+| 4.17 | Suggests 3 next questions | there is no suggestions right now - it should suggestions based on what is asked currently | "You might also want to ask..." |
 | 4.18 | Handles off-topic gracefully | ☐ | "Let's focus on financial wellness" |
 | 4.19 | Shows disclaimers | ☐ | "Not financial advice, consult pro" |
-| 4.20 | "Talk to Agent" escalation option | ☐ | Link or button |
+| 4.20 | "Talk to Agent" escalation option | it does not have anything like that currently | Link or button |
 
 ### Gemini API Integration
 | # | Expected Feature | Reality Status | Notes |
@@ -195,18 +195,18 @@ Map every expected feature from original plan to current reality.
 ### User Confusion Detection
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|
-| 5.1 | Tracks hover without click (friction) | ☐ | Likely NOT implemented (stretch) |
-| 5.2 | Detects user stuck on question | ☐ | Time-based tracking |
-| 5.3 | Popup: "Are you confused?" | ☐ | |
-| 5.4 | Hover over term shows explanation tooltip | ☐ | Manual help alternative |
-| 5.5 | "Need help?" button always visible | ☐ | Floating button |
+| 5.1 | Tracks hover without click (friction) | we need to implement this, it is not there for now | Likely NOT implemented (stretch) |
+| 5.2 | Detects user stuck on question | we need to implement this, it is not there for now  | Time-based tracking |
+| 5.3 | Popup: "Are you confused?" | we need to implement this, it is not there for now  | |
+| 5.4 | Hover over term shows explanation tooltip | we need to implement this, it is not there for now  | Manual help alternative |
+| 5.5 | "Need help?" button always visible | we need to implement this, it is not there for now  | Floating button |
 
 ### Recovery Actions
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|
-| 5.6 | Simplifies UI when confusion detected | ☐ | Adaptive interface |
-| 5.7 | Shows comparison chart | ☐ | Visual explanation |
-| 5.8 | Activates voice mode | ☐ | Read explanation aloud |
+| 5.6 | Simplifies UI when confusion detected | we need to implement this, it is not there for now | Adaptive interface |
+| 5.7 | Shows comparison chart | we need to implement this, it is not there for now  | Visual explanation |
+| 5.8 | Activates voice mode | we need to implement this, it is not there for now  | Read explanation aloud |
 
 **Original Expectation:** Automatically detect and help confused users  
 **Likely Reality:** Manual help only (click for explanation)
@@ -239,13 +239,13 @@ Map every expected feature from original plan to current reality.
 **Likely Reality:** Basic accessibility only (mobile-responsive, simple language)
 
 ---
-
+Important - Remove timeline tab - it does not do anything
 ## 🟢 PHASE 7: Emergency Readiness Planner
 
 ### Emergency Calculator
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|
-| 7.1 | Calculator visible in dashboard | ☐ | **Likely NOT integrated yet** |
+| 7.1 | Calculator visible in dashboard | implement this fully | **Likely NOT integrated yet** |
 | 7.2 | Input: Monthly income | ☐ | Number field |
 | 7.3 | Input: Monthly expenses | ☐ | Number field |
 | 7.4 | Input: Current savings | ☐ | Number field |
@@ -286,34 +286,34 @@ Map every expected feature from original plan to current reality.
 ### Dashboard Components
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|
-| 8.1 | Profile summary card | ☐ | Name, age, coverage type |
+| 8.1 | Profile summary card |  | Name, age, coverage type |
 | 8.2 | Shows user's name from survey | ☐ | |
-| 8.3 | Shows coverage type selected | ☐ | Self, Family, etc |
+| 8.3 | Shows coverage type selected | it is not getting displayed | Self, Family, etc |
 | 8.4 | AI Recommendations section | ☐ | Top 3-5 suggestions |
 | 8.5 | Emergency readiness section | ☐ | Months + gauge |
-| 8.6 | Risk score visualization | ☐ | Chart or gauge |
-| 8.7 | Risk score explanation | ☐ | What does score mean |
+| 8.6 | Risk score visualization | this is not clear right now | Chart or gauge |
+| 8.7 | Risk score explanation | this is not clear right now | What does score mean |
 | 8.8 | Quick actions section | ☐ | Buttons/links |
 | 8.9 | **ACTION:** "Chat with AI" | ☐ | Opens chat |
-| 8.10 | **ACTION:** "Recalculate Plans" | ☐ | Re-runs generation |
+| 8.10 | **ACTION:** "Recalculate Plans" | where is it? | Re-runs generation |
 | 8.11 | **ACTION:** "Update Profile" | ☐ | Edit survey answers |
-| 8.12 | **ACTION:** "Talk to Agent" | ☐ | **CRITICAL - SF alignment** |
+| 8.12 | **ACTION:** "Talk to Agent" | not all buttons are working | **CRITICAL - SF alignment** |
 | 8.13 | Testimonials section | ☐ | 2-3 user quotes |
 | 8.14 | Testimonial format: Quote + Name + Context | ☐ | |
 | 8.15 | Footer links | ☐ | Privacy, Terms, etc |
-
+Important - remove send reports to hr from everywhere
 ### Navigation (Bottom Nav)
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|
 | 8.16 | Bottom nav visible on all screens | ☐ | Fixed position |
 | 8.17 | **TAB 1:** Insights (dashboard icon) | ☐ | Main recommendations |
-| 8.18 | **TAB 2:** Timeline (clock icon) | ☐ | Life events |
+| 8.18 | **TAB 2:** Timeline (clock icon) | remove this tab | Life events |
 | 8.19 | **TAB 3:** Learn (book icon) | ☐ | Financial resources |
-| 8.20 | **TAB 4:** Upload (upload icon) | ☐ | Policy documents |
+| 8.20 | **TAB 4:** Upload (upload icon) | there is no functionality yet and use case or maybe upload document in the sowSmart CHAT | Policy documents |
 | 8.21 | **TAB 5:** Profile (user icon) | ☐ | Edit personal info |
 | 8.22 | Active tab highlighted | ☐ | Visual indicator |
 | 8.23 | Smooth transitions between screens | ☐ | Animations |
-
+IMPORTANT - change directory to SowSmart , which i am working on , remove traces of finclear,finmate,lincoln 
 ### Individual Screens
 | # | Expected Feature | Reality Status | Notes |
 |---|------------------|----------------|-------|

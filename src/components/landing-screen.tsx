@@ -288,13 +288,26 @@ export default function LandingScreen({ onStart, onViewInsights, quizCompleted, 
               if (email === "demo@sowsmart.com" && password === "demo123") {
                 setInvalid(false)
                 setModal(null)
-                setTimeout(() => onViewInsights?.(), 300)
+                // Navigate to quiz/insights based on what's available
+                setTimeout(() => {
+                  if (onViewInsights) {
+                    onViewInsights()
+                  } else if (onStart) {
+                    onStart()
+                  }
+                }, 300)
               } else {
                 setInvalid(true)
               }
             } else {
+              // Signup: close modal and start the app
               setInvalid(false)
-              handleFakeSubmit()
+              setModal(null)
+              setTimeout(() => {
+                if (onStart) {
+                  onStart()
+                }
+              }, 300)
             }
           }}
           className="flex flex-col gap-3"

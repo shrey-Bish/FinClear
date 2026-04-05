@@ -1,10 +1,10 @@
 "use client"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { askSowSmart } from "@/lib/chat"
-import { Loader2, X } from "lucide-react"
+import { Loader2, X, Sparkles } from "lucide-react"
 
 type Role = "user" | "assistant" | "error" | "system"
-type Msg = { id: string; role: Role; content: string; ts: number; provider?: "gemini" | "gemini-fallback" }
+type Msg = { id: string; role: Role; content: string; ts: number; provider?: "gemini" | "gemini-fallback"; suggestions?: string[] }
 
 export function ChatModal({
   initialOpen = false, onClose, persona, focusGoal, userId, sessionId, baseContext
@@ -13,6 +13,7 @@ export function ChatModal({
   const [input, setInput] = useState("")
   const [sending, setSending] = useState(false)
   const [messages, setMessages] = useState<Msg[]>([])
+  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const sid = useMemo(() => {
@@ -55,8 +56,22 @@ export function ChatModal({
     setSending(true)
     try {
       const payload = await askSowSmart({ prompt: text, userId, sessionId: sid, context: { ...(baseContext||{}), ...(extraContext||{}) } })
-      if ("error" in payload) setMessages(m => [...m, { id: crypto.randomUUID(), role:"error", ts: Date.now(), content: `Error: ${payload.error}` }])
-      else setMessages(m => [...m, { id: crypto.randomUUID(), role:"assistant", ts: Date.now(), content: payload.message || "(no content)", provider: payload.provider }])
+      if ("error" in payload) {
+        setMessages(m => [...m, { id: crypto.randomUUID(), role:"error", ts: Date.now(), content: `Error: ${payload.error}` }])
+      } else {
+        setMessages(m => [...m, { 
+          id: crypto.randomUUID(), 
+          role:"assistant", 
+          ts: Date.now(), 
+          content: payload.message || "(no content)", 
+          provider: payload.provider,
+          suggestions: payload.suggestions
+        }])
+        // Update suggestions if provided
+        if (payload.suggestions?.length) {
+          setCurrentSuggestions(payload.suggestions)
+        }
+      }
     } catch (e:any) {
       setMessages(m => [...m, { id: crypto.randomUUID(), role:"error", ts: Date.now(), content: `Network error: ${String(e)}` }])
     } finally { setSending(false) }
@@ -79,10 +94,22 @@ export function ChatModal({
           <button onClick={close} aria-label="Close" className="rounded-full p-1 text-[#1B5E20] hover:bg-[#F0E6E7]"><X className="h-4 w-4" /></button>
         </div>
 
+        {/* Dynamic Suggestions */}
         <div className="flex flex-wrap gap-2 border-b px-5 py-3 text-xs">
-          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#1B5E20]" onClick={() => setInput("Summarize my priorities")}>Summarize my priorities</button>
-          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#1B5E20]" onClick={() => setInput("What should I tackle next?")}>What should I tackle next?</button>
-          <button className="rounded-full bg-[#F1E3E5] px-3 py-1 text-[#1B5E20]" onClick={() => setInput("Email my plan to HR")}>Email my plan to HR</button>
+          {(currentSuggestions.length > 0 ? currentSuggestions : [
+            "Summarize my priorities",
+            "What should I tackle next?",
+            "Help me understand my insurance options"
+          ]).map((suggestion, i) => (
+            <button 
+              key={i}
+              className="flex items-center gap-1 rounded-full bg-[#E8F5E9] px-3 py-1.5 text-[#2E7D32] hover:bg-[#C8E6C9] transition-colors" 
+              onClick={() => { setInput(suggestion); void send(suggestion) }}
+            >
+              <Sparkles className="h-3 w-3" />
+              {suggestion}
+            </button>
+          ))}
         </div>
 
         <div ref={scrollRef} className="max-h-[52vh] space-y-3 overflow-y-auto px-5 py-4">

@@ -11,7 +11,7 @@ export type ChatPayload = {
   }
 }
 export type ChatResponse =
-  | { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string }
+  | { message: string; provider: "gemini" | "gemini-fallback"; sources?: string[]; note?: string; suggestions?: string[] }
   | { error: string; [k: string]: unknown }
 
 export async function askSowSmart(input: ChatPayload): Promise<ChatResponse> {
