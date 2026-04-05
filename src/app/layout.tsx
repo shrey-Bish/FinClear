@@ -6,9 +6,9 @@ import { UserProvider } from "@/lib/user-context"
 import "@/styles/globals.css"
 
 export const metadata: Metadata = {
-  title: "SowSmart - Plant Good Financial Habits Early",
+  title: "SowSmart - Insurance Made Simple for Gen Z",
   description:
-    "🌱 SowSmart helps you grow your financial future. AI-powered guidance on insurance, savings, and emergency planning tailored to your life and goals.",
+    "Skip the phone calls. Get State Farm coverage in 2 minutes. SowSmart makes insurance as easy as ordering food.",
   generator: "SowSmart",
 }
 
@@ -19,6 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet" />
+      </head>
       <body className="min-h-screen font-sans antialiased">
         <ChatBusMount />
         <UserProvider>

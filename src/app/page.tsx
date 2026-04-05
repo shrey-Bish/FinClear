@@ -1,387 +1,127 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 
-import { BottomNav } from "@/components/bottom-nav"
+import { LandingPage, ChatOnboarding, InsightsPage } from "@/components/lemonade"
 import { ChatModal } from "@/components/chat-modal"
-import { DynamicQuiz } from "@/components/DynamicQuiz"
-import { UploadScreen } from "@/components/upload-screen"
-import { InsightsDashboard } from "@/components/insights-dashboard"
-import LandingScreen from "@/components/landing-screen"
-import { LearningHub } from "@/components/learning-hub"
-import { ProfileSettings } from "@/components/profile-settings"
-import { TimelineScreen } from "@/components/timeline-screen"
-import { requestPlans, sendPlanReport, upsertUser, fetchInsights } from "@/lib/api"
-import {
-  DEFAULT_ENROLLMENT_FORM,
-  FORM_STORAGE_KEY,
-  INSIGHTS_STORAGE_KEY,
-  MOMENTS_STORAGE_KEY,
-  PROFILE_CREATED_KEY,
-} from "@/lib/enrollment"
 import { useHydrated } from "@/lib/hooks/useHydrated"
-import { buildInsights, buildPriorityBenefits, withDerivedMetrics } from "@/lib/insights"
 import {
   removeStorage,
   readStorage,
-  readString,
   writeStorage,
-  writeString,
 } from "@/lib/storage"
-import type {
-  EnrollmentFormData,
-  SowSmartInsights,
-  ProfileSnapshot,
-  SavedMoment,
-  ScreenKey,
-} from "@/lib/types"
 import { useUser } from "@/lib/user-context"
-import { cn } from "@/lib/utils"
 
-function createFreshForm(): EnrollmentFormData {
-  return withDerivedMetrics({
-    ...DEFAULT_ENROLLMENT_FORM,
-    createdAt: new Date().toISOString(),
-  })
-}
+// Screen types for the new Lemonade-style flow
+type ScreenKey = "landing" | "onboarding" | "insights"
+
+// Storage keys
+const USER_DATA_KEY = "sowsmart_user_data"
+const ONBOARDING_COMPLETE_KEY = "sowsmart_onboarding_complete"
 
 export default function Home() {
-  const { user, isLoading: userLoading, login, logout } = useUser()
-  const [currentScreen, setCurrentScreen] = useState<ScreenKey>(() => "landing")
-  const [formData, setFormData] = useState<EnrollmentFormData | null>(() => createFreshForm())
-  const [insights, setInsights] = useState<SowSmartInsights | null>(null)
-  const [savedMoments, setSavedMoments] = useState<SavedMoment[]>([])
-  const [profileCreatedAt, setProfileCreatedAt] = useState<string>(() => new Date().toISOString())
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false)
-  const [usingPlaceholder, setUsingPlaceholder] = useState(false)
+  const { login } = useUser()
+  const [currentScreen, setCurrentScreen] = useState<ScreenKey>("landing")
+  const [userData, setUserData] = useState<Record<string, any>>({})
+  const [showChat, setShowChat] = useState(false)
   const isHydrated = useHydrated()
 
+  // Load saved data on mount
   useEffect(() => {
     if (!isHydrated) return
 
-    const storedProfileCreated = readString(PROFILE_CREATED_KEY, "")
-    if (storedProfileCreated) {
-      setProfileCreatedAt(storedProfileCreated)
-    } else {
-      const created = new Date().toISOString()
-      setProfileCreatedAt(created)
-      writeString(PROFILE_CREATED_KEY, created)
+    const savedUserData = readStorage<Record<string, any>>(USER_DATA_KEY, {})
+    const onboardingComplete = readStorage<boolean>(ONBOARDING_COMPLETE_KEY, false)
+
+    if (savedUserData && Object.keys(savedUserData).length > 0) {
+      setUserData(savedUserData)
     }
 
-    const storedForm = readStorage<EnrollmentFormData | null>(FORM_STORAGE_KEY, null)
-    if (storedForm) {
-      setFormData(withDerivedMetrics(storedForm))
-    } else {
-      setFormData(createFreshForm())
-    }
-
-    const storedInsights = readStorage<SowSmartInsights | null>(INSIGHTS_STORAGE_KEY, null)
-    if (storedInsights) {
-      setInsights(storedInsights)
-      setHasCompletedQuiz(true)
+    if (onboardingComplete) {
       setCurrentScreen("insights")
-      // Check if this is placeholder data by looking at the user's data completeness
-      // If insights exist but no real form data, it's likely placeholder
-      if (!storedForm || storedForm.isGuest) {
-        setUsingPlaceholder(true)
-      }
-    } else {
-      setHasCompletedQuiz(false)
-      // Keep landing page as default for new users
-      setCurrentScreen("landing")
     }
-
-    const storedMoments = readStorage<SavedMoment[]>(MOMENTS_STORAGE_KEY, [])
-    if (storedMoments.length) {
-      setSavedMoments(storedMoments)
-    }
-
   }, [isHydrated])
 
-  // Helper to scroll to top when navigating
-  const scrollToTop = () => {
+  // Save user data when it changes
+  useEffect(() => {
+    if (!isHydrated) return
+    if (Object.keys(userData).length > 0) {
+      writeStorage(USER_DATA_KEY, userData)
+    }
+  }, [userData, isHydrated])
+
+  // Navigation helper
+  const navigateTo = (screen: ScreenKey) => {
+    setCurrentScreen(screen)
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
-  // Navigation helper that scrolls to top
-  const navigateTo = (screen: ScreenKey) => {
-    setCurrentScreen(screen)
-    scrollToTop()
-  }
-
-  useEffect(() => {
-    if (!isHydrated) return
-    if (formData) {
-      writeStorage(FORM_STORAGE_KEY, formData)
-    } else {
-      removeStorage(FORM_STORAGE_KEY)
-    }
-  }, [formData, isHydrated])
-
-  useEffect(() => {
-    if (!isHydrated) return
-    if (insights) {
-      writeStorage(INSIGHTS_STORAGE_KEY, insights)
-    } else {
-      removeStorage(INSIGHTS_STORAGE_KEY)
-    }
-  }, [insights, isHydrated])
-
-  useEffect(() => {
-    if (!isHydrated) return
-    writeStorage(MOMENTS_STORAGE_KEY, savedMoments)
-  }, [savedMoments, isHydrated])
-
-  const ensureUserSession = (name: string) => {
-    login({ name, createdAt: profileCreatedAt })
-  }
-
-  const assignUserId = () =>
-    (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `user-${Date.now()}`)
-
+  // Handle start - go to onboarding
   const handleStart = () => {
-    const base = formData
-      ? {
-          ...formData,
-          userId: formData.userId ?? assignUserId(),
-          createdAt: new Date().toISOString(),
-        }
-      : {
-          ...createFreshForm(),
-          userId: assignUserId(),
-        }
-    const prepared = withDerivedMetrics(base)
-    ensureUserSession(prepared.preferredName || prepared.fullName || "Guest")
-    setFormData(prepared)
-    setHasCompletedQuiz(false)
-    navigateTo("quiz")
+    navigateTo("onboarding")
   }
 
-  // Handler for retaking quiz / updating profile
-  const handleRecalculate = () => {
-    navigateTo("quiz")
-  }
-
-  const handleQuizUpdate = (data: EnrollmentFormData) => {
-    setFormData(data)
-  }
-
-  const appendMomentForInsights = (nextInsights: SowSmartInsights) => {
-    const timestamp = new Date().toISOString()
-    const momentId = `${nextInsights.themeKey ?? "plan"}-${Date.now()}`
-    const newMoment: SavedMoment = {
-      id: momentId,
-      category: nextInsights.themeKey ?? "foundation",
-      summary: nextInsights.focusGoal,
-      timeline: nextInsights.timeline,
-      timestamp,
-      insight: nextInsights,
+  // Handle onboarding complete
+  const handleOnboardingComplete = (data: Record<string, any>) => {
+    setUserData(data)
+    writeStorage(ONBOARDING_COMPLETE_KEY, true)
+    
+    // Login user
+    if (data.firstName) {
+      login({ name: data.firstName, createdAt: new Date().toISOString() })
     }
-
-    setSavedMoments((previous) => {
-      const filtered = previous.filter((entry) => entry.summary !== newMoment.summary)
-      return [...filtered, newMoment].slice(-8)
-    })
+    
+    navigateTo("insights")
   }
 
-  const handleQuizComplete = async (data: EnrollmentFormData) => {
-    const prepared = withDerivedMetrics({ ...data, userId: data.userId ?? assignUserId() })
-    ensureUserSession(prepared.preferredName || prepared.fullName || "Guest")
-    setFormData(prepared)
-    setIsGenerating(true)
-    setHasCompletedQuiz(true)
-
-    const localInsights = buildInsights(prepared)
-    setInsights(localInsights)
-    appendMomentForInsights(localInsights)
-
-    try {
-      const saveResult = await upsertUser(prepared)
-      const userId = saveResult.data?.userId ?? prepared.userId ?? assignUserId()
-      if (userId !== prepared.userId) {
-        setFormData((existing) => (existing ? { ...existing, userId } : existing))
-      }
-      
-      // Try to fetch insights from database first
-      const insightsResult = await fetchInsights(userId)
-      if (insightsResult.data?.insights) {
-        const remoteInsights = insightsResult.data.insights
-        const normalized = remoteInsights.priorityBenefits?.length
-          ? remoteInsights
-          : { ...remoteInsights, priorityBenefits: buildPriorityBenefits(prepared) }
-        setInsights(normalized)
-        setUsingPlaceholder(insightsResult.data.usingPlaceholder)
-        appendMomentForInsights(normalized)
-      } else {
-        // Fallback to generating plans
-        const planResult = await requestPlans(userId)
-        if (planResult.data?.insights) {
-          const remoteInsights = planResult.data.insights
-          const normalized = remoteInsights.priorityBenefits?.length
-            ? remoteInsights
-            : { ...remoteInsights, priorityBenefits: buildPriorityBenefits(prepared) }
-          setInsights(normalized)
-          setUsingPlaceholder(false)
-          appendMomentForInsights(normalized)
-        }
-      }
-    } finally {
-      setIsGenerating(false)
-      navigateTo("insights")
+  // Handle back navigation
+  const handleBack = () => {
+    if (currentScreen === "onboarding") {
+      navigateTo("landing")
+    } else if (currentScreen === "insights") {
+      navigateTo("onboarding")
     }
   }
 
-  const handleRegenerate = async () => {
-    if (!formData) return
-    setIsGenerating(true)
-    try {
-      const userId = formData.userId ?? assignUserId()
-      
-      // Try to fetch insights from database first
-      const insightsResult = await fetchInsights(userId)
-      if (insightsResult.data?.insights) {
-        const updated = insightsResult.data.insights
-        const normalized = updated.priorityBenefits?.length
-          ? updated
-          : { ...updated, priorityBenefits: buildPriorityBenefits(formData) }
-        setInsights(normalized)
-        setUsingPlaceholder(insightsResult.data.usingPlaceholder)
-        appendMomentForInsights(normalized)
-      } else {
-        // Fallback to generating plans
-        const planResult = await requestPlans(userId)
-        if (planResult.data?.insights) {
-          const updated = planResult.data.insights
-          const normalized = updated.priorityBenefits?.length
-            ? updated
-            : { ...updated, priorityBenefits: buildPriorityBenefits(formData) }
-          setInsights(normalized)
-          setUsingPlaceholder(false)
-          appendMomentForInsights(normalized)
-        } else {
-          const fallback = buildInsights(formData)
-          setInsights(fallback)
-          setUsingPlaceholder(true)
-          appendMomentForInsights(fallback)
-        }
-      }
-    } finally {
-      setIsGenerating(false)
-    }
+  // Handle chat toggle
+  const handleChat = () => {
+    setShowChat(true)
   }
 
-  const handleSelectMoment = (selectedInsight: SowSmartInsights) => {
-    setInsights(selectedInsight)
-    setCurrentScreen("insights")
+  // Handle agent connect (mock)
+  const handleAgentConnect = () => {
+    alert("A State Farm agent will text you within 10 minutes! (Demo)")
   }
 
-  const handleNavigate = (target: ScreenKey) => {
-    if (target === "insights" && !insights) {
-      navigateTo(formData ? "quiz" : "landing")
-      return
-    }
-    navigateTo(target)
+  // Clear data and start fresh
+  const handleClearData = () => {
+    setUserData({})
+    removeStorage(USER_DATA_KEY)
+    removeStorage(ONBOARDING_COMPLETE_KEY)
+    navigateTo("landing")
   }
 
-  const handleClearAllData = () => {
-    setFormData(createFreshForm())
-    setInsights(null)
-    setSavedMoments([])
-    setHasCompletedQuiz(false)
-    logout()
-    removeStorage(FORM_STORAGE_KEY)
-    removeStorage(INSIGHTS_STORAGE_KEY)
-    removeStorage(MOMENTS_STORAGE_KEY)
-    removeStorage(PROFILE_CREATED_KEY)
-    const refreshedCreatedAt = new Date().toISOString()
-    setProfileCreatedAt(refreshedCreatedAt)
-    navigateTo("quiz")
-  }
-
-  const profileSnapshot: ProfileSnapshot = useMemo(() => {
-    if (!formData) {
-      return {
-        name: user?.name ?? "Guest",
-        focusArea: insights?.focusGoal ?? "Priority guidance",
-        age: "—",
-        employmentStartDate: "—",
-        dependents: 0,
-        residencyStatus: "Citizen",
-        citizenship: "United States",
-        riskFactorScore: 0,
-        activitySummary: "",
-        coverageComplexity: "medium",
-        createdAt: user?.createdAt ?? profileCreatedAt,
-      }
-    }
-
-    const activitySummary = formData.physicalActivities
-      ? formData.activityList.length
-        ? formData.activityList.join(", ")
-        : "Active lifestyle"
-      : "Low impact"
-
-    return {
-      name: formData.preferredName || formData.fullName,
-      focusArea: insights?.focusGoal ?? "Priority guidance",
-      age: formData.age ? String(formData.age) : "—",
-      employmentStartDate: formData.employmentStartDate,
-      dependents: formData.dependents,
-      residencyStatus: formData.residencyStatus,
-      citizenship: formData.citizenship,
-      riskFactorScore: formData.derived.riskFactorScore,
-      activitySummary,
-      coverageComplexity: formData.derived.coverageComplexity,
-      createdAt: user?.createdAt ?? profileCreatedAt,
-    }
-  }, [formData, insights?.focusGoal, profileCreatedAt, user])
-
-  const handleProfileUpdate = async (next: EnrollmentFormData) => {
-    const prepared = withDerivedMetrics(next)
-    setFormData(prepared)
-    setInsights((current) => {
-      if (current || hasCompletedQuiz) {
-        return buildInsights(prepared)
-      }
-      return current
-    })
-    if (prepared.userId) {
-      void upsertUser(prepared)
-    }
-  }
-
-  const handleSendReport = async () => {
-    if (!formData?.userId || !insights?.selectedPlanId) return
-    const result = await sendPlanReport(formData.userId, insights.selectedPlanId)
-    if (result.data?.reportUrl) {
-      if (typeof window !== "undefined") {
-        window.open(result.data.reportUrl, "_blank")
-      }
-    } else if (typeof window !== "undefined") {
-      window.alert(result.error ?? "We couldn’t prepare the report just yet.")
-    }
-  }
-
-  if (!isHydrated || userLoading) {
+  // Loading state
+  if (!isHydrated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F1F8E9] text-[#2E7D32]">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-center">
-          <div className="mb-4 text-2xl font-semibold text-[#2E7D32]">🌱 SowSmart</div>
-          <div className="text-sm">Preparing your financial guidance...</div>
+          <div className="font-script text-3xl text-gray-800 mb-4">SowSmart</div>
+          <div className="flex gap-1 justify-center">
+            <span className="w-2 h-2 bg-[#FF0080] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="w-2 h-2 bg-[#FF0080] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="w-2 h-2 bg-[#FF0080] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
         </div>
       </div>
     )
   }
 
-  const navVisibleScreens: ScreenKey[] = ["insights", "learn", "quiz", "profile"]
-
   return (
     <>
-      <main className={cn("min-h-screen bg-[#F1F8E9] pb-24", isGenerating && "pointer-events-none opacity-95")}> 
       <AnimatePresence mode="wait" initial={false}>
         {currentScreen === "landing" && (
           <motion.div
@@ -389,124 +129,54 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <LandingScreen
-              onStart={handleStart}
-              hasExistingInsights={!!insights}
-              onViewInsights={() => navigateTo("insights")}
-              quizCompleted={hasCompletedQuiz}
-            />
-          </motion.div>
-        )}
-
-        {currentScreen === "quiz" && formData && (
-          <motion.div
-            key="quiz"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.3 }}
           >
-            <DynamicQuiz
-              initialData={formData}
-              onBack={() => setCurrentScreen("landing")}
-              onUpdate={handleQuizUpdate}
-              onComplete={handleQuizComplete}
+            <LandingPage
+              onStart={handleStart}
+              onLogin={handleStart}
             />
           </motion.div>
         )}
 
-        {currentScreen === "insights" && insights && (
+        {currentScreen === "onboarding" && (
+          <motion.div
+            key="onboarding"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ChatOnboarding
+              onComplete={handleOnboardingComplete}
+              onBack={handleBack}
+            />
+          </motion.div>
+        )}
+
+        {currentScreen === "insights" && (
           <motion.div
             key="insights"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <InsightsDashboard
-              insights={insights}
-              onBackToLanding={() => navigateTo("landing")}
-              onRegenerate={handleRegenerate}
-              onSendReport={handleSendReport}
-              onRecalculate={handleRecalculate}
-              loading={isGenerating}
-              usingPlaceholder={usingPlaceholder}
-              formData={formData}
+            <InsightsPage
+              userData={userData}
+              onBack={handleBack}
+              onChat={handleChat}
+              onAgentConnect={handleAgentConnect}
             />
-          </motion.div>
-        )}
-
-        {currentScreen === "timeline" && (
-          <motion.div
-            key="timeline"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-          >
-            <TimelineScreen
-              savedInsights={savedMoments}
-              onBack={() => setCurrentScreen(insights ? "insights" : "quiz")}
-              onSelectInsight={handleSelectMoment}
-            />
-          </motion.div>
-        )}
-
-        {currentScreen === "upload" && (
-          <motion.div
-            key="upload"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-          >
-            <UploadScreen onBack={() => setCurrentScreen(insights ? "insights" : "landing")} />
-          </motion.div>
-        )}
-
-        {currentScreen === "profile" && (
-          <motion.div
-            key="profile"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ProfileSettings
-              profile={profileSnapshot}
-              onClearData={handleClearAllData}
-              onSendReport={handleSendReport}
-              formData={formData}
-              onUpdateProfile={handleProfileUpdate}
-            />
-          </motion.div>
-        )}
-
-        {currentScreen === "learn" && (
-          <motion.div
-            key="learn"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-          >
-            <LearningHub persona={insights?.goalTheme ?? "New Professional"} />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {navVisibleScreens.includes(currentScreen) && (
-        <BottomNav currentScreen={currentScreen} onNavigate={handleNavigate} />
-      )}
-
-      </main>
+      {/* Chat Modal */}
       <ChatModal
-        baseContext={{ app: "SowSmart" }}
-        focusGoal={insights?.focusGoal}
-        persona={insights?.goalTheme}
-        userId={formData?.userId ?? undefined}
+        baseContext={{ app: "SowSmart", userData }}
+        focusGoal={userData.biggestWorry}
+        persona="Gen Z Insurance Helper"
+        userId={userData.firstName || "guest"}
       />
     </>
   )
