@@ -15,6 +15,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.41.1",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",

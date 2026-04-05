@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { ElevenLabsClient, ElevenLabsError } from "@elevenlabs/elevenlabs-js"
 
 export const runtime = "nodejs"
 
@@ -10,6 +11,10 @@ type VoiceRequest = {
 
 const DEFAULT_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"
 const DEFAULT_MODEL_ID = process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2"
+
+const elevenlabs = new ElevenLabsClient({
+  apiKey: process.env.ELEVENLABS_API_KEY,
+})
 
 export async function POST(request: Request) {
   try {
@@ -32,46 +37,19 @@ export async function POST(request: Request) {
     const voiceId = body.voiceId?.trim() || DEFAULT_VOICE_ID
     const modelId = body.modelId?.trim() || DEFAULT_MODEL_ID
 
-    const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "audio/mpeg",
-          "Content-Type": "application/json",
-          "xi-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          text,
-          model_id: modelId,
-          voice_settings: {
-            stability: 0.45,
-            similarity_boost: 0.85,
-            style: 0.2,
-            use_speaker_boost: true,
-          },
-        }),
-      }
-    )
+    const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
+      text,
+      modelId,
+      outputFormat: "mp3_44100_128",
+      voiceSettings: {
+        stability: 0.45,
+        similarityBoost: 0.85,
+        style: 0.2,
+        useSpeakerBoost: true,
+      },
+    })
 
-    if (!response.ok) {
-      const detail = await response.text().catch(() => "")
-      const isPaymentRequired = response.status === 402
-      return NextResponse.json(
-        {
-          error: isPaymentRequired
-            ? "ElevenLabs payment required"
-            : "ElevenLabs synthesis failed",
-          detail: detail || `HTTP ${response.status}`,
-          hint: isPaymentRequired
-            ? "Check your ElevenLabs plan, credits, and API key permissions. Webhooks are not required for TTS playback."
-            : undefined,
-        },
-        { status: response.status }
-      )
-    }
-
-    const audio = Buffer.from(await response.arrayBuffer())
+    const audio = Buffer.from(await new Response(audioStream).arrayBuffer())
     return new NextResponse(audio, {
       status: 200,
       headers: {
@@ -81,6 +59,29 @@ export async function POST(request: Request) {
       },
     })
   } catch (error) {
+    if (error instanceof ElevenLabsError) {
+      const status = error.statusCode ?? 500
+      const detail =
+        typeof error.body === "string"
+          ? error.body
+          : error.body
+            ? JSON.stringify(error.body)
+            : error.message
+      const isPaymentRequired = status === 402
+      return NextResponse.json(
+        {
+          error: isPaymentRequired
+            ? "ElevenLabs payment required"
+            : "ElevenLabs synthesis failed",
+          detail: detail || `HTTP ${status}`,
+          hint: isPaymentRequired
+            ? "Check your ElevenLabs plan, credits, and API key permissions. Webhooks are not required for TTS playback."
+            : undefined,
+        },
+        { status }
+      )
+    }
+
     const detail = error instanceof Error ? error.message : String(error)
     return NextResponse.json({ error: "Voice API failed", detail }, { status: 500 })
   }
